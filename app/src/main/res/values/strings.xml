@@ -4,4 +4,13 @@
     <string name="weatherInYourCity">Погода в вашем городе</string>
     <string name="getForecast">Узнать</string>
     <string name="requestUserInput">Пожалуйста, введите название города</string>
+    <string name="checkInput">Пожалуйста, проверьте правильность введенных данных</string>
+    <string name="weatherInCity">Погода в городе:</string>
+    <string name="temperature">Температура:</string>
+    <string name="feelsLike">Ощущается как:</string>
+    <string name="windSpeed">Скорость ветра:</string>
+    <string name="clouds">Облачность:</string>
+    <string name="pressure">Атмосферное давление:</string>
+    <string name="sunrise">Восход:</string>
+    <string name="sunset">Закат:</string>
 </resources>

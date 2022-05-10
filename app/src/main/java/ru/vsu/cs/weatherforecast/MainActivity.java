@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.appsearch.GetByDocumentIdRequest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -37,14 +38,27 @@ public class MainActivity extends AppCompatActivity {
         btnGetForecast = findViewById(R.id.btnGetForecast);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        btnGetForecast.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!etCityName.getText().toString().trim().equals("")) {
-                    Toast.makeText(MainActivity.this, R.string.requestUserInput, Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent toForecastView = new Intent(MainActivity.this, ForecastData.class);
-                    startActivity(toForecastView);
+        btnGetForecast.setOnClickListener(v -> {
+            if (etCityName.getText().toString().trim().equals("")) {
+                Toast.makeText(MainActivity.this, R.string.requestUserInput, Toast.LENGTH_SHORT).show();
+            } else {
+                Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
+                try {
+                    List<Address> addresses = geocoder.getFromLocationName(etCityName.getText().toString(), 1);
+                    if (addresses.size() == 0) {
+                        Toast.makeText(MainActivity.this, R.string.checkInput, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Double latitude = addresses.get(0).getLatitude();
+                        Double longitude = addresses.get(0).getLongitude();
+                        Intent toForecastView = new Intent(MainActivity.this, ForecastData.class);
+                        toForecastView.putExtra("latitude", latitude);
+                        toForecastView.putExtra("longitude", longitude);
+                        toForecastView.putExtra("cityName", etCityName.getText().toString());
+                        startActivity(toForecastView);
+                    }
+                } catch (IOException e) {
+                    Toast.makeText(MainActivity.this, R.string.checkInput, Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 }
             }
         });
@@ -73,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            String cityName = null;
+            String cityName;
             Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
             List<Address> addresses;
             try {
