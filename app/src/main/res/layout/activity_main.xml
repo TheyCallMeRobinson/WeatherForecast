@@ -25,15 +25,20 @@
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <Button
-        android:id="@+id/btnGetForecast"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="40dp"
-        android:text="@string/getForecast"
+        android:id="@+id/btnGetForecastForToday"
+        android:text="@string/getForecastForToday"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etCityName" />
+        app:layout_constraintTop_toBottomOf="@+id/etCityName"
+        style="@style/Button" />
+
+    <Button
+        android:id="@+id/btnGetForecastForWeek"
+        style="@style/Button"
+        android:layout_marginTop="16dp"
+        android:text="@string/getForecastForWeek"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnGetForecastForToday" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

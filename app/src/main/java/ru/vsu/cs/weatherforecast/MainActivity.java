@@ -4,8 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.appsearch.GetByDocumentIdRequest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,7 +13,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -27,7 +24,8 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     private EditText etCityName;
-    private Button btnGetForecast;
+    private Button btnGetForecastForToday;
+    private Button btnGetForecastForWeek;
     private LocationManager locationManager;
 
     @Override
@@ -35,10 +33,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         etCityName = findViewById(R.id.etCityName);
-        btnGetForecast = findViewById(R.id.btnGetForecast);
+        btnGetForecastForToday = findViewById(R.id.btnGetForecastForToday);
+        btnGetForecastForWeek = findViewById(R.id.btnGetForecastForWeek);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        btnGetForecast.setOnClickListener(v -> {
+        btnGetForecastForToday.setOnClickListener(v -> {
             if (etCityName.getText().toString().trim().equals("")) {
                 Toast.makeText(MainActivity.this, R.string.requestUserInput, Toast.LENGTH_SHORT).show();
             } else {
@@ -54,6 +53,32 @@ public class MainActivity extends AppCompatActivity {
                         toForecastView.putExtra("latitude", latitude);
                         toForecastView.putExtra("longitude", longitude);
                         toForecastView.putExtra("cityName", etCityName.getText().toString());
+                        toForecastView.putExtra("days", 7);
+                        startActivity(toForecastView);
+                    }
+                } catch (IOException e) {
+                    Toast.makeText(MainActivity.this, R.string.checkInput, Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
+        });
+        btnGetForecastForWeek.setOnClickListener(v -> {
+            if (etCityName.getText().toString().trim().equals("")) {
+                Toast.makeText(MainActivity.this, R.string.requestUserInput, Toast.LENGTH_SHORT).show();
+            } else {
+                Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
+                try {
+                    List<Address> addresses = geocoder.getFromLocationName(etCityName.getText().toString(), 1);
+                    if (addresses.size() == 0) {
+                        Toast.makeText(MainActivity.this, R.string.checkInput, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Double latitude = addresses.get(0).getLatitude();
+                        Double longitude = addresses.get(0).getLongitude();
+                        Intent toForecastView = new Intent(MainActivity.this, ForecastList.class);
+                        toForecastView.putExtra("latitude", latitude);
+                        toForecastView.putExtra("longitude", longitude);
+                        toForecastView.putExtra("cityName", etCityName.getText().toString());
+                        toForecastView.putExtra("days", 7);
                         startActivity(toForecastView);
                     }
                 } catch (IOException e) {

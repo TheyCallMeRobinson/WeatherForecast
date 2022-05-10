@@ -2,7 +2,8 @@
     <string name="app_name">WeatherForecast</string>
     <string name="inputCity">Введите город</string>
     <string name="weatherInYourCity">Погода в вашем городе</string>
-    <string name="getForecast">Узнать</string>
+    <string name="getForecastForToday">Узнать на сегодня</string>
+    <string name="getForecastForWeek">Узнать на неделю</string>
     <string name="requestUserInput">Пожалуйста, введите название города</string>
     <string name="checkInput">Пожалуйста, проверьте правильность введенных данных</string>
     <string name="weatherInCity">Погода в городе:</string>
@@ -13,4 +14,5 @@
     <string name="pressure">Атмосферное давление:</string>
     <string name="sunrise">Восход:</string>
     <string name="sunset">Закат:</string>
+    <string name="forecast">Погода</string>
 </resources>
