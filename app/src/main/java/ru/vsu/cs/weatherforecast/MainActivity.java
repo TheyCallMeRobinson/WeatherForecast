@@ -80,9 +80,9 @@ public class MainActivity extends AppCompatActivity {
                         toForecastView.putExtra("cityName", etCityName.getText().toString());
                         toForecastView.putExtra("days", 7);
                         startActivity(toForecastView);
-                    }
+                    }//implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
                 } catch (IOException e) {
-                    Toast.makeText(MainActivity.this, R.string.checkInput, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.connectionIssue, Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                1000 * 10, 10, locationListener);
+                1000, 10, locationListener);
         locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER, 1000 * 10, 10,
                 locationListener);

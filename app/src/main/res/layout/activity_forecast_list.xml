@@ -8,23 +8,20 @@
 
     <TextView
         android:id="@+id/forecastHeader"
-        style="@style/MainTextView"
+        style="@style/Text.MainTextView"
         android:layout_marginTop="16dp"
         android:text="@string/forecast"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/forecastList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
-        android:divider="@color/purple_700"
-        android:dividerHeight="3dp"
-        android:minHeight="100dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/listHeader" />
 
@@ -44,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textAlignment="center"
-            android:text="Дата"
+            android:text="@string/dateHeader"
             android:textSize="16sp"
             android:layout_weight="1" />
 
@@ -53,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textAlignment="center"
-            android:text="Температура"
+            android:text="@string/temperatureHeader"
             android:textSize="16sp"
             android:layout_weight="1" />
 
@@ -62,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textAlignment="center"
-            android:text="Облака %"
+            android:text="@string/cloudsHeader"
             android:textSize="16sp"
             android:layout_weight="1"/>
 
@@ -71,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:text="Скорость \nветра"
+            android:text="@string/windSpeedHeader"
             android:textSize="16sp"
             android:layout_weight="1"/>
 

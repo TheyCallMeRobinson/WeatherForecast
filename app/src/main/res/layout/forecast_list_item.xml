@@ -1,61 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:divider="?android:listDivider"
     android:dividerPadding="2.5dp"
+    android:minHeight="50dp"
     android:showDividers="middle"
     >
 
+    <ImageView
+        android:id="@+id/weatherImageItem"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:srcCompat="@drawable/ic_launcher_foreground"
+        android:contentDescription="@string/weather_picture" />
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="0.1"
-        android:divider="?android:listDivider"
-        android:dividerPadding="2.5dp"
-        android:showDividers="middle"
-        >
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tvDateItem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:layout_weight="1" />
+            android:id="@+id/weatherDescriptionItem"
+            style="@style/Text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="Rainy"
+            android:textSize="30sp" />
 
         <TextView
-            android:id="@+id/tvTemperatureItem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/tvCloudsItem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:layout_weight="1"/>
-
-        <TextView
-            android:id="@+id/tvWindSpeedItem"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:layout_weight="1"/>
+            android:id="@+id/temperatureItem"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="+6 C"
+            android:textAlignment="inherit"
+            android:textSize="20sp" />
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tvDescriptionItem"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:textSize="30sp" />
+        android:id="@+id/weekdayItem"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.7"
+        android:text="01.01.1970\nTue"
+        android:textAlignment="center" />
 
 </LinearLayout>

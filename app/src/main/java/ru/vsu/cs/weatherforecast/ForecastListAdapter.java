@@ -1,47 +1,60 @@
 package ru.vsu.cs.weatherforecast;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ForecastListAdapter extends ArrayAdapter<String> {
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
-    private final Activity context;
-    private final String[] datesData;
-    private final String[] temperatureData;
-    private final String[] cloudsData;
-    private final String[] windSpeedData;
-    private final String[] descriptionData;
+import java.util.List;
 
-    public ForecastListAdapter(Activity context, String[] datesData, String[] temperatureData, String[] cloudsData, String[] windSpeedData, String[] descriptionData) {
-        super(context, R.layout.forecast_list_item, datesData);
-        this.context = context;
-        this.datesData = datesData;
-        this.temperatureData = temperatureData;
-        this.cloudsData = cloudsData;
-        this.windSpeedData = windSpeedData;
-        this.descriptionData = descriptionData;
+public class ForecastListAdapter extends RecyclerView.Adapter<ForecastListAdapter.ViewHolder> {
+
+    private final LayoutInflater inflater;
+    private final List<ForecastListItem> list;
+
+    public ForecastListAdapter(@NonNull Activity context, List<ForecastListItem> list) {
+        this.inflater = LayoutInflater.from(context);
+        this.list = list;
     }
-    public View getView(int position, View view, ViewGroup parent) {
-        LayoutInflater inflater = context.getLayoutInflater();
-        View rowView = inflater.inflate(R.layout.forecast_list_item, null,true);
 
-        TextView tvDatesData = (TextView) rowView.findViewById(R.id.tvDateItem);
-        TextView tvTemperatureData = (TextView) rowView.findViewById(R.id.tvTemperatureItem);
-        TextView tvCloudsData = (TextView) rowView.findViewById(R.id.tvCloudsItem);
-        TextView tvWindSpeedData = (TextView) rowView.findViewById(R.id.tvWindSpeedItem);
-        TextView tvDescriptionData = (TextView) rowView.findViewById(R.id.tvDescriptionItem);
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = inflater.inflate(R.layout.forecast_list_item, parent, false);
+        return new ViewHolder(view);
+    }
 
-        tvDatesData.setText(datesData[position]);
-        tvTemperatureData.setText(temperatureData[position]);
-        tvCloudsData.setText(cloudsData[position]);
-        tvWindSpeedData.setText(windSpeedData[position]);
-        tvDescriptionData.setText(descriptionData[position]);
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        ForecastListItem item = list.get(position);
+        holder.tvTemperature.setText(item.getTemperature());
+        holder.tvDescription.setText(item.getDescription());
+        holder.tvDate.setText(item.getDate());
+        holder.ivWeatherImage.setImageDrawable(item.getWeatherImage());
+    }
 
-        return rowView;
+    @Override
+    public int getItemCount() {
+        return list.size();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        final TextView tvDescription;
+        final TextView tvTemperature;
+        final TextView tvDate;
+        final ImageView ivWeatherImage;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            this.tvDescription = (TextView) itemView.findViewById(R.id.weatherDescriptionItem);
+            this.tvTemperature = (TextView) itemView.findViewById(R.id.temperatureItem);
+            this.tvDate = (TextView) itemView.findViewById(R.id.weekdayItem);
+            this.ivWeatherImage = (ImageView) itemView.findViewById(R.id.weatherImageItem);
+        }
     }
 }

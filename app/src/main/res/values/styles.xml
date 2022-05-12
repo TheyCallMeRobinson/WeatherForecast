@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="MainTextView">
+
+    <style name="Text">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="Text.MainTextView">
+        <item name="android:textColor">@color/black</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">100dp</item>
@@ -10,7 +16,7 @@
         <item name="android:layout_marginEnd">40dp</item>
     </style>
 
-    <style name="MainEditText">
+    <style name="Text.MainEditText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">80dp</item>
@@ -19,7 +25,7 @@
         <item name="android:ems">10</item>
     </style>
 
-    <style name="ForecastTextView">
+    <style name="Text.ForecastTextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">50dp</item>
@@ -27,7 +33,7 @@
         <item name="android:textSize">24sp</item>
     </style>
 
-    <style name="ForecastDetailsTextView">
+    <style name="Text.ForecastDetailsTextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">20dp</item>
@@ -36,7 +42,7 @@
         <item name="android:ems">7</item>
     </style>
 
-    <style name="ForecastDetailsTextViewValue">
+    <style name="Text.ForecastDetailsTextViewValue">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">20dp</item>
@@ -46,6 +52,8 @@
     </style>
 
     <style name="Button">
+        <item name="android:background">@color/blue</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">40dp</item>

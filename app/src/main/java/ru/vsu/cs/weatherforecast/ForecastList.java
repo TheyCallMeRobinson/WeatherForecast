@@ -1,12 +1,17 @@
 package ru.vsu.cs.weatherforecast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -33,81 +38,66 @@ public class ForecastList extends AppCompatActivity {
     private Double longitude;
     private Double latitude;
     private String cityName;
-    private Integer days;
-    private ListView forecastList;
+    private RecyclerView forecastList;
+    private Drawable pic;
 
-    private List<String> datesData;
-    private List<String> temperatureData;
-    private List<String> cloudsData;
-    private List<String> windSpeedData;
-    private List<String> descriptionData;
+    private List<ForecastListItem> list = new ArrayList<>();
 
     private static final String WEATHER_API_KEY = "4ee0653bd41375d67d0527057889f757";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast_list);
-        setUpArrays();
         getExtras();
         getDataFromApi();
-        //setUpViews();
-        //setUpListeners();
+//        setUpViews();
+//        setUpListeners();
         //System.err.println(datesData);
     }
-
 
     private void getExtras() {
         Bundle extras = getIntent().getExtras();
         latitude = (Double) extras.get("latitude");
         longitude = (Double) extras.get("longitude");
         cityName = (String) extras.get("cityName");
-        days = (Integer) extras.get("days");
     }
 
     private void setUpViews() {
-        ForecastListAdapter fla = new ForecastListAdapter(
-                this,
-                datesData.toArray(new String[0]),
-                temperatureData.toArray(new String[0]),
-                cloudsData.toArray(new String[0]),
-                windSpeedData.toArray(new String[0]),
-                descriptionData.toArray(new String[0])
-        );
+        ForecastListAdapter fla = new ForecastListAdapter(this, list);
         forecastList = findViewById(R.id.forecastList);
         forecastList.setAdapter(fla);
     }
 
-    private void setUpArrays() {
-        datesData = new ArrayList<>();
-        temperatureData = new ArrayList<>();
-        cloudsData = new ArrayList<>();
-        windSpeedData = new ArrayList<>();
-        descriptionData = new ArrayList<>();
-    }
-
     private void setUpListeners() {
-        forecastList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent toForecastView = new Intent(ForecastList.this, ForecastData.class);
-                toForecastView.putExtra("latitude", latitude);
-                toForecastView.putExtra("longitude", longitude);
-                toForecastView.putExtra("cityName", cityName);
-                startActivity(toForecastView);
-            }
-        });
+//        forecastList.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+//            @Override
+//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+//                return false;
+//            }
+//
+//            @Override
+//            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+//                Intent toForecastView = new Intent(ForecastList.this, ForecastData.class);
+//                toForecastView.putExtra("latitude", latitude);
+//                toForecastView.putExtra("longitude", longitude);
+//                toForecastView.putExtra("cityName", cityName);
+//                startActivity(toForecastView);
+//            }
+//
+//            @Override
+//            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
+//        });
     }
 
     private void getDataFromApi() {
-        String url = "https://api.openweathermap.org/data/2.5/onecall" +
+        String urlJsonData = "https://api.openweathermap.org/data/2.5/onecall" +
                 "?lat=" + latitude +
                 "&lon=" + longitude +
                 "&exclude=minutely,hourly,alert" +
                 "&appid=" + WEATHER_API_KEY +
                 "&units=metric&lang=ru";
-        new GetAPIData().execute(url);
+        new GetAPIData().execute(urlJsonData);
     }
 
     private class GetAPIData extends AsyncTask<String, String, String> {
@@ -137,13 +127,11 @@ public class ForecastList extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                if (connection != null) {
+                if (connection != null)
                     connection.disconnect();
-                }
                 try {
-                    if (reader != null) {
+                    if (reader != null)
                         reader.close();
-                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -161,28 +149,44 @@ public class ForecastList extends AppCompatActivity {
                 latitude = o.getDouble("lat");
                 JSONArray arr = o.getJSONArray("daily");
                 for (int i = 0; i < arr.length(); i++) {
-                    Date date = new Date(arr.getJSONObject(i).getInt("dt"));
-                    DateFormat df = new SimpleDateFormat("dd:MM:yyyy", Locale.getDefault());
-                    datesData.add(df.format(date));
-                    temperatureData.add(String.valueOf(arr.getJSONObject(i).getJSONObject("temp").getDouble("day")));
-                    cloudsData.add(String.valueOf(arr.getJSONObject(i).getDouble("clouds")));
-                    windSpeedData.add(String.valueOf(arr.getJSONObject(i).getInt("wind_speed")));
-                    descriptionData.add(String.valueOf(arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("main")));
+                    new GetAPIPicture().execute(arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("icon"));
+                    String description = arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("main");
+                    String temperature = String.valueOf(arr.getJSONObject(i).getJSONObject("temp").getDouble("day"));
+                    String date = new java.text.SimpleDateFormat("dd.MM.yy").format(new java.util.Date(arr.getJSONObject(i).getInt("dt") * 1000L));
+                    ForecastListItem fli = new ForecastListItem(pic, description, temperature, date);
+                    list.add(fli);
                 }
-
-//                tvCityName.setText(cityName);
-//                tvTemperatureValue.setText(String.format("%s %s", o.getJSONObject("main").getDouble("temp"), "℃"));
-//                tvFeelsLikeValue.setText(String.format("%s %s", o.getJSONObject("main").getDouble("feels_like"), "℃"));
-//                tvWindSpeedValue.setText(String.format("%s %s", o.getJSONObject("wind").getDouble("speed"), "м/c"));
-//                tvCloudsValue.setText(String.format("%s%s", o.getJSONObject("clouds").getDouble("all"), "%"));
-//                tvPressureValue.setText(String.format("%s %s", o.getJSONObject("main").getDouble("pressure"), "мм рт. ст."));
-//                tvSunriseValue.setText(new Time(o.getJSONObject("sys").getInt("sunrise")).toString());
-//                tvSunsetValue.setText(new Time(o.getJSONObject("sys").getInt("sunset")).toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             setUpViews();
             setUpListeners();
+        }
+    }
+
+    private class GetAPIPicture extends AsyncTask<String, String, Drawable> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Drawable s) {
+            super.onPostExecute(s);
+        }
+
+        @Override
+        protected Drawable doInBackground(String... strings) {
+            String picName = strings[0];
+            try {
+                String urlPicData = "https://openweathermap.org/img/wn/" + picName + "@2x.png";
+                InputStream is = (InputStream) new URL(urlPicData).getContent();
+                pic =  Drawable.createFromStream(is, "src name");
+            } catch (Exception e) {
+                e.printStackTrace();
+                pic = null;
+            }
+            return pic;
         }
     }
 }

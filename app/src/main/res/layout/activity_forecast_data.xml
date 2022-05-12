@@ -8,67 +8,67 @@
 
     <TextView
         android:id="@+id/tvWeatherInCity"
-        style="@style/ForecastTextView"
+        style="@style/Text.ForecastTextView"
         android:text="@string/weatherInCity"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvTemperature"
-        style="@style/ForecastDetailsTextView"
+        style="@style/Text.ForecastDetailsTextView"
         android:text="@string/temperature"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvWeatherInCity" />
 
     <TextView
         android:id="@+id/tvFeelsLike"
-        style="@style/ForecastDetailsTextView"
+        style="@style/Text.ForecastDetailsTextView"
         android:text="@string/feelsLike"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTemperature" />
 
     <TextView
         android:id="@+id/tvWindSpeed"
-        style="@style/ForecastDetailsTextView"
+        style="@style/Text.ForecastDetailsTextView"
         android:text="@string/windSpeed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvFeelsLike" />
 
     <TextView
         android:id="@+id/tvTemperatureValue"
-        style="@style/ForecastDetailsTextViewValue"
+        style="@style/Text.ForecastDetailsTextViewValue"
         app:layout_constraintStart_toEndOf="@+id/tvTemperature"
         app:layout_constraintTop_toBottomOf="@+id/tvWeatherInCity" />
 
     <TextView
         android:id="@+id/tvFeelsLikeValue"
-        style="@style/ForecastDetailsTextViewValue"
+        style="@style/Text.ForecastDetailsTextViewValue"
         app:layout_constraintStart_toEndOf="@+id/tvFeelsLike"
         app:layout_constraintTop_toBottomOf="@+id/tvTemperature" />
 
     <TextView
         android:id="@+id/tvWindSpeedValue"
-        style="@style/ForecastDetailsTextViewValue"
+        style="@style/Text.ForecastDetailsTextViewValue"
         app:layout_constraintStart_toEndOf="@+id/tvWindSpeed"
         app:layout_constraintTop_toBottomOf="@+id/tvFeelsLike" />
 
     <TextView
         android:id="@+id/tvClouds"
-        style="@style/ForecastDetailsTextView"
+        style="@style/Text.ForecastDetailsTextView"
         android:text="@string/clouds"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvWindSpeed" />
 
     <TextView
         android:id="@+id/tvPressure"
-        style="@style/ForecastDetailsTextView"
+        style="@style/Text.ForecastDetailsTextView"
         android:text="@string/pressure"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvClouds" />
 
     <TextView
         android:id="@+id/tvSunrise"
-        style="@style/ForecastDetailsTextView"
+        style="@style/Text.ForecastDetailsTextView"
         android:text="@string/sunrise"
         app:layout_constraintStart_toStartOf="parent"
         android:ems="4"
@@ -76,14 +76,14 @@
 
     <TextView
         android:id="@+id/tvCityName"
-        style="@style/ForecastTextView"
+        style="@style/Text.ForecastTextView"
         android:layout_marginStart="12dp"
         app:layout_constraintStart_toEndOf="@+id/tvWeatherInCity"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvSunset"
-        style="@style/ForecastDetailsTextView"
+        style="@style/Text.ForecastDetailsTextView"
         android:text="@string/sunset"
         android:ems="3"
         app:layout_constraintStart_toEndOf="@+id/tvSunriseValue"
@@ -91,25 +91,25 @@
 
     <TextView
         android:id="@+id/tvCloudsValue"
-        style="@style/ForecastDetailsTextViewValue"
+        style="@style/Text.ForecastDetailsTextViewValue"
         app:layout_constraintStart_toEndOf="@+id/tvClouds"
         app:layout_constraintTop_toBottomOf="@+id/tvWindSpeed" />
 
     <TextView
         android:id="@+id/tvPressureValue"
-        style="@style/ForecastDetailsTextViewValue"
+        style="@style/Text.ForecastDetailsTextViewValue"
         app:layout_constraintStart_toEndOf="@+id/tvPressure"
         app:layout_constraintTop_toBottomOf="@+id/tvClouds" />
 
     <TextView
         android:id="@+id/tvSunriseValue"
-        style="@style/ForecastDetailsTextViewValue"
+        style="@style/Text.ForecastDetailsTextViewValue"
         app:layout_constraintStart_toEndOf="@+id/tvSunrise"
         app:layout_constraintTop_toBottomOf="@+id/tvPressure" />
 
     <TextView
         android:id="@+id/tvSunsetValue"
-        style="@style/ForecastDetailsTextViewValue"
+        style="@style/Text.ForecastDetailsTextViewValue"
         app:layout_constraintStart_toEndOf="@+id/tvSunset"
         app:layout_constraintTop_toBottomOf="@+id/tvPressure" />
 
