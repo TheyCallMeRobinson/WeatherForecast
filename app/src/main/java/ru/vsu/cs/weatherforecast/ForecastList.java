@@ -2,8 +2,10 @@ package ru.vsu.cs.weatherforecast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -66,28 +68,34 @@ public class ForecastList extends AppCompatActivity {
     private void setUpViews() {
         ForecastListAdapter fla = new ForecastListAdapter(this, list);
         forecastList = findViewById(R.id.forecastList);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(forecastList.getContext(),
+                1);
+        forecastList.addItemDecoration(dividerItemDecoration);
         forecastList.setAdapter(fla);
     }
 
     private void setUpListeners() {
-//        forecastList.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-//            @Override
-//            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-//                return false;
-//            }
-//
-//            @Override
-//            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-//                Intent toForecastView = new Intent(ForecastList.this, ForecastData.class);
-//                toForecastView.putExtra("latitude", latitude);
-//                toForecastView.putExtra("longitude", longitude);
-//                toForecastView.putExtra("cityName", cityName);
-//                startActivity(toForecastView);
-//            }
-//
-//            @Override
-//            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
-//        });
+        forecastList.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+                int pos = forecastList.getChildLayoutPosition(rv);
+                Toast.makeText(ForecastList.this, "Position " + pos, Toast.LENGTH_SHORT).show();
+                Intent toForecastView = new Intent(ForecastList.this, ForecastData.class);
+                toForecastView.putExtra("latitude", latitude);
+                toForecastView.putExtra("longitude", longitude);
+                toForecastView.putExtra("cityName", cityName);
+                startActivity(toForecastView);
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
+        });
     }
 
     private void getDataFromApi() {
@@ -152,7 +160,7 @@ public class ForecastList extends AppCompatActivity {
                     new GetAPIPicture().execute(arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("icon"));
                     String description = arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("main");
                     String temperature = String.valueOf(arr.getJSONObject(i).getJSONObject("temp").getDouble("day"));
-                    String date = new java.text.SimpleDateFormat("dd.MM.yy").format(new java.util.Date(arr.getJSONObject(i).getInt("dt") * 1000L));
+                    String date = new SimpleDateFormat("dd.MM.yy", Locale.getDefault()).format(new java.util.Date(arr.getJSONObject(i).getInt("dt") * 1000L));
                     ForecastListItem fli = new ForecastListItem(pic, description, temperature, date);
                     list.add(fli);
                 }
@@ -181,7 +189,7 @@ public class ForecastList extends AppCompatActivity {
             try {
                 String urlPicData = "https://openweathermap.org/img/wn/" + picName + "@2x.png";
                 InputStream is = (InputStream) new URL(urlPicData).getContent();
-                pic =  Drawable.createFromStream(is, "src name");
+                pic = Drawable.createFromStream(is, "src name");
             } catch (Exception e) {
                 e.printStackTrace();
                 pic = null;

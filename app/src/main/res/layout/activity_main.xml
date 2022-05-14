@@ -5,8 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-<!--<androidx.recyclerview.widget.RecyclerView>-->
-<!--</androidx.recyclerview.widget.RecyclerView>-->
     <TextView
         android:id="@+id/textView"
         android:text="@string/weatherInYourCity"
@@ -15,7 +13,7 @@
         app:layout_constraintTop_toTopOf="parent"
         style="@style/Text.MainTextView" />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/etCityName"
         style="@style/Text.MainEditText"
         android:hint="@string/inputCity"
@@ -23,8 +21,7 @@
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:autofillHints="Moskow|London" />
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <Button
         android:id="@+id/btnGetForecastForToday"

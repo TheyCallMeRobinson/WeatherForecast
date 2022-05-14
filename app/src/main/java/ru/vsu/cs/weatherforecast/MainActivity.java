@@ -13,6 +13,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -23,20 +25,34 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText etCityName;
+    private AutoCompleteTextView etCityName;
     private Button btnGetForecastForToday;
     private Button btnGetForecastForWeek;
     private LocationManager locationManager;
+    private static final String[] CITIES = new String[] {
+            "Moskow", "Kiyv", "Berlin", "London", "Paris", "Warsaw", "New York", "Hong Kong", "Tokyo"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        etCityName = findViewById(R.id.etCityName);
+        setUpViews();
+        setListeners();
+    }
+
+    private void setUpViews() {
+        etCityName = (AutoCompleteTextView) findViewById(R.id.etCityName);
         btnGetForecastForToday = findViewById(R.id.btnGetForecastForToday);
         btnGetForecastForWeek = findViewById(R.id.btnGetForecastForWeek);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+        ArrayAdapter<String> citiesAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, CITIES);
+        etCityName.setAdapter(citiesAdapter);
+    }
+
+    private void setListeners() {
         btnGetForecastForToday.setOnClickListener(v -> {
             if (etCityName.getText().toString().trim().equals("")) {
                 Toast.makeText(MainActivity.this, R.string.requestUserInput, Toast.LENGTH_SHORT).show();
@@ -88,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     @Override
     protected void onResume() {

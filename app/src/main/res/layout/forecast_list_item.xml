@@ -14,7 +14,6 @@
         android:id="@+id/weatherImageItem"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        app:srcCompat="@drawable/ic_launcher_foreground"
         android:contentDescription="@string/weather_picture" />
 
     <LinearLayout
@@ -31,7 +30,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:text="Rainy"
-            android:textSize="30sp" />
+            android:textSize="25sp" />
 
         <TextView
             android:id="@+id/temperatureItem"
@@ -45,9 +44,9 @@
 
     <TextView
         android:id="@+id/weekdayItem"
-        android:layout_width="0dp"
+        android:layout_width="90dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.7"
+        android:minWidth="50dp"
         android:text="01.01.1970\nTue"
         android:textAlignment="center" />
 
