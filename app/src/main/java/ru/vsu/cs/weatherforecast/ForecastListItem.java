@@ -3,10 +3,10 @@ package ru.vsu.cs.weatherforecast;
 import android.graphics.drawable.Drawable;
 
 public class ForecastListItem {
-    private final Drawable weatherImage;
-    private final String description;
-    private final String temperature;
-    private final String date;
+    private Drawable weatherImage;
+    private String description;
+    private String temperature;
+    private String date;
 
     public ForecastListItem(Drawable weatherImage, String description, String temperature, String date) {
         this.weatherImage = weatherImage;
@@ -29,5 +29,21 @@ public class ForecastListItem {
 
     public String getDate() {
         return date;
+    }
+
+    public void setWeatherImage(Drawable weatherImage) {
+        this.weatherImage = weatherImage;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTemperature(String temperature) {
+        this.temperature = temperature;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

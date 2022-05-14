@@ -5,16 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -27,13 +22,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class ForecastList extends AppCompatActivity {
 
@@ -41,8 +35,7 @@ public class ForecastList extends AppCompatActivity {
     private Double latitude;
     private String cityName;
     private RecyclerView forecastList;
-    private Drawable pic;
-
+    private List<String> picNames = new ArrayList<>();
     private List<ForecastListItem> list = new ArrayList<>();
 
     private static final String WEATHER_API_KEY = "4ee0653bd41375d67d0527057889f757";
@@ -108,6 +101,10 @@ public class ForecastList extends AppCompatActivity {
         new GetAPIData().execute(urlJsonData);
     }
 
+    private void getImagesFromApi() {
+        new GetAPIPicture().execute();
+    }
+
     private class GetAPIData extends AsyncTask<String, String, String> {
         protected void onPreExecute() {
             super.onPreExecute();
@@ -127,7 +124,7 @@ public class ForecastList extends AppCompatActivity {
                 reader = new BufferedReader(new InputStreamReader(stream));
 
                 StringBuilder builder = new StringBuilder();
-                String line = "";
+                String line;
                 while((line = reader.readLine()) != null) {
                     builder.append(line).append("\n");
                 }
@@ -157,14 +154,14 @@ public class ForecastList extends AppCompatActivity {
                 latitude = o.getDouble("lat");
                 JSONArray arr = o.getJSONArray("daily");
                 for (int i = 0; i < arr.length(); i++) {
-                    new GetAPIPicture().execute(arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("icon"));
+                    Drawable pic = new GetAPIPicture().execute(arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("icon")).get();
                     String description = arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("main");
                     String temperature = String.valueOf(arr.getJSONObject(i).getJSONObject("temp").getDouble("day"));
-                    String date = new SimpleDateFormat("dd.MM.yy", Locale.getDefault()).format(new java.util.Date(arr.getJSONObject(i).getInt("dt") * 1000L));
+                    String date = new SimpleDateFormat("dd.MM.yy", Locale.getDefault()).format(new Date(arr.getJSONObject(i).getInt("dt") * 1000L));
                     ForecastListItem fli = new ForecastListItem(pic, description, temperature, date);
                     list.add(fli);
                 }
-            } catch (JSONException e) {
+            } catch (JSONException | ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
             setUpViews();
@@ -172,7 +169,7 @@ public class ForecastList extends AppCompatActivity {
         }
     }
 
-    private class GetAPIPicture extends AsyncTask<String, String, Drawable> {
+    private class GetAPIPicture extends AsyncTask<String, Void, Drawable> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -186,6 +183,7 @@ public class ForecastList extends AppCompatActivity {
         @Override
         protected Drawable doInBackground(String... strings) {
             String picName = strings[0];
+            Drawable pic;
             try {
                 String urlPicData = "https://openweathermap.org/img/wn/" + picName + "@2x.png";
                 InputStream is = (InputStream) new URL(urlPicData).getContent();
@@ -194,6 +192,7 @@ public class ForecastList extends AppCompatActivity {
                 e.printStackTrace();
                 pic = null;
             }
+
             return pic;
         }
     }
