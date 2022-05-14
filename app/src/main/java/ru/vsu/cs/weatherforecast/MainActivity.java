@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     private Button btnGetForecastForToday;
     private Button btnGetForecastForWeek;
     private LocationManager locationManager;
+    private ProgressBar progressBar;
+
     private static final String[] CITIES = new String[] {
             "Moskow", "Kiyv", "Berlin", "London", "Paris", "Warsaw", "New York", "Hong Kong", "Tokyo"
     };
@@ -42,11 +45,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpViews() {
-        etCityName = (AutoCompleteTextView) findViewById(R.id.etCityName);
+        etCityName = findViewById(R.id.etCityName);
         btnGetForecastForToday = findViewById(R.id.btnGetForecastForToday);
         btnGetForecastForWeek = findViewById(R.id.btnGetForecastForWeek);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
+        progressBar = findViewById(R.id.progressBarMain);
         ArrayAdapter<String> citiesAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, CITIES);
         etCityName.setAdapter(citiesAdapter);
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setListeners() {
         btnGetForecastForToday.setOnClickListener(v -> {
+            progressBar.setVisibility(ProgressBar.VISIBLE);
             if (etCityName.getText().toString().trim().equals("")) {
                 Toast.makeText(MainActivity.this, R.string.requestUserInput, Toast.LENGTH_SHORT).show();
             } else {
@@ -74,11 +78,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } catch (IOException e) {
                     Toast.makeText(MainActivity.this, R.string.checkInput, Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(ProgressBar.INVISIBLE);
                     e.printStackTrace();
                 }
             }
+            progressBar.setVisibility(ProgressBar.INVISIBLE);
         });
         btnGetForecastForWeek.setOnClickListener(v -> {
+            progressBar.setVisibility(ProgressBar.VISIBLE);
             if (etCityName.getText().toString().trim().equals("")) {
                 Toast.makeText(MainActivity.this, R.string.requestUserInput, Toast.LENGTH_SHORT).show();
             } else {
@@ -98,10 +105,12 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(toForecastView);
                     }//implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
                 } catch (IOException e) {
+                    progressBar.setVisibility(ProgressBar.INVISIBLE);
                     Toast.makeText(MainActivity.this, R.string.connectionIssue, Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
             }
+            progressBar.setVisibility(ProgressBar.INVISIBLE);
         });
     }
 

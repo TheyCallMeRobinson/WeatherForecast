@@ -12,8 +12,8 @@
 
     <ImageView
         android:id="@+id/weatherImageItem"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:contentDescription="@string/weather_picture" />
 
     <LinearLayout
@@ -30,16 +30,16 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:text="Rainy"
-            android:textSize="25sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/temperatureItem"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:text="+6 C"
             android:textAlignment="inherit"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
     </LinearLayout>
 
     <TextView

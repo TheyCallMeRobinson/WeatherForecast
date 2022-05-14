@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -35,7 +36,7 @@ public class ForecastList extends AppCompatActivity {
     private Double latitude;
     private String cityName;
     private RecyclerView forecastList;
-    private List<String> picNames = new ArrayList<>();
+    private ProgressBar progressBar;
     private List<ForecastListItem> list = new ArrayList<>();
 
     private static final String WEATHER_API_KEY = "4ee0653bd41375d67d0527057889f757";
@@ -44,11 +45,12 @@ public class ForecastList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast_list);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(ProgressBar.VISIBLE);
         getExtras();
         getDataFromApi();
 //        setUpViews();
 //        setUpListeners();
-        //System.err.println(datesData);
     }
 
     private void getExtras() {
@@ -69,7 +71,6 @@ public class ForecastList extends AppCompatActivity {
 
     private void setUpListeners() {
         forecastList.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
                 return false;
@@ -99,10 +100,6 @@ public class ForecastList extends AppCompatActivity {
                 "&appid=" + WEATHER_API_KEY +
                 "&units=metric&lang=ru";
         new GetAPIData().execute(urlJsonData);
-    }
-
-    private void getImagesFromApi() {
-        new GetAPIPicture().execute();
     }
 
     private class GetAPIData extends AsyncTask<String, String, String> {
@@ -141,7 +138,6 @@ public class ForecastList extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-
             return null;
         }
 
@@ -155,10 +151,17 @@ public class ForecastList extends AppCompatActivity {
                 JSONArray arr = o.getJSONArray("daily");
                 for (int i = 0; i < arr.length(); i++) {
                     Drawable pic = new GetAPIPicture().execute(arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("icon")).get();
-                    String description = arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("main");
-                    String temperature = String.valueOf(arr.getJSONObject(i).getJSONObject("temp").getDouble("day"));
-                    String date = new SimpleDateFormat("dd.MM.yy", Locale.getDefault()).format(new Date(arr.getJSONObject(i).getInt("dt") * 1000L));
-                    ForecastListItem fli = new ForecastListItem(pic, description, temperature, date);
+                    pic.setBounds(0, 0, 75, 75);
+                    String description = arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("description");
+                    double temperature = arr.getJSONObject(i).getJSONObject("temp").getDouble("day");
+                    String temp = (temperature > 0 ? "+" : "-") + temperature + "℃";
+                    long date = arr.getJSONObject(i).getInt("dt") * 1000L;
+                    ForecastListItem fli = new ForecastListItem(
+                            pic,
+                            AppUtils.firstUpperCase(description),
+                            temp,
+                            new SimpleDateFormat("dd.MM.yy", Locale.getDefault()).format(new Date(date))
+                    );
                     list.add(fli);
                 }
             } catch (JSONException | ExecutionException | InterruptedException e) {
@@ -166,6 +169,7 @@ public class ForecastList extends AppCompatActivity {
             }
             setUpViews();
             setUpListeners();
+            progressBar.setVisibility(ProgressBar.INVISIBLE);
         }
     }
 
@@ -192,7 +196,6 @@ public class ForecastList extends AppCompatActivity {
                 e.printStackTrace();
                 pic = null;
             }
-
             return pic;
         }
     }
