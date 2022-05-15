@@ -6,6 +6,7 @@
     <color name="black">#181818</color>
     <color name="white">#FFFFFF</color>
     <color name="white_pale">#26FFFFFF</color>
-    <color name="white_light_pale">#E6F0FF</color>
+    <color name="white_light_pale">#B3FFFFFF</color>
+    <color name="sky_blue">#E6F0FF</color>
     <color name="black_pale">#27000000</color>
 </resources>

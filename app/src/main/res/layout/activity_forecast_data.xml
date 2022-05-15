@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ForecastData">
+    tools:context=".ForecastData"
+    android:background="@drawable/background_img">
 
     <TextView
         android:id="@+id/tvWeatherInCity"
@@ -77,17 +78,16 @@
     <TextView
         android:id="@+id/tvCityName"
         style="@style/Text.ForecastTextView"
-        android:layout_marginStart="12dp"
         app:layout_constraintStart_toEndOf="@+id/tvWeatherInCity"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvSunset"
         style="@style/Text.ForecastDetailsTextView"
+        android:ems="4"
         android:text="@string/sunset"
-        android:ems="3"
-        app:layout_constraintStart_toEndOf="@+id/tvSunriseValue"
-        app:layout_constraintTop_toBottomOf="@+id/tvPressure" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSunrise" />
 
     <TextView
         android:id="@+id/tvCloudsValue"
@@ -111,6 +111,6 @@
         android:id="@+id/tvSunsetValue"
         style="@style/Text.ForecastDetailsTextViewValue"
         app:layout_constraintStart_toEndOf="@+id/tvSunset"
-        app:layout_constraintTop_toBottomOf="@+id/tvPressure" />
+        app:layout_constraintTop_toBottomOf="@+id/tvSunrise" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
