@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -16,12 +17,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Time;
+import java.util.Date;
 
 public class ForecastData extends AppCompatActivity {
 
     private Double latitude;
     private Double longitude;
     private String cityName;
+    private Integer position;
 
     private TextView tvCityName;
     private TextView tvTemperatureValue;
@@ -48,6 +51,10 @@ public class ForecastData extends AppCompatActivity {
         latitude = (Double) extras.get("latitude");
         longitude = (Double) extras.get("longitude");
         cityName = (String) extras.get("cityName");
+        position = (Integer) extras.get("position");
+        if (position == null) {
+            position = 0;
+        }
     }
 
     private void setupLayout() {
@@ -62,11 +69,13 @@ public class ForecastData extends AppCompatActivity {
     }
 
     private void getDataFromApi() {
-        String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude +
+        String urlJsonData = "https://api.openweathermap.org/data/2.5/onecall" +
+                "?lat=" + latitude +
                 "&lon=" + longitude +
+                "&exclude=minutely,hourly,alert" +
                 "&appid=" + WEATHER_API_KEY +
                 "&units=metric&lang=ru";
-        new GetAPIData().execute(url);
+        new GetAPIData().execute(urlJsonData);
     }
 
     private class GetAPIData extends AsyncTask<String, String, String> {
@@ -115,18 +124,15 @@ public class ForecastData extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             try {
-                JSONObject o = new JSONObject(s);
-                longitude = o.getJSONObject("coord").getDouble("lon");
-                latitude = o.getJSONObject("coord").getDouble("lat");
-                cityName = o.getString("name");
+                JSONObject o = new JSONObject(s).getJSONArray("daily").getJSONObject(position);
                 tvCityName.setText(cityName);
-                tvTemperatureValue.setText(String.format("%s %s", o.getJSONObject("main").getDouble("temp"), "℃"));
-                tvFeelsLikeValue.setText(String.format("%s %s", o.getJSONObject("main").getDouble("feels_like"), "℃"));
-                tvWindSpeedValue.setText(String.format("%s %s", o.getJSONObject("wind").getDouble("speed"), "м/c"));
-                tvCloudsValue.setText(String.format("%s%s", o.getJSONObject("clouds").getDouble("all"), "%"));
-                tvPressureValue.setText(String.format("%s %s", o.getJSONObject("main").getDouble("pressure"), "мм рт. ст."));
-                tvSunriseValue.setText(new Time(o.getJSONObject("sys").getInt("sunrise")).toString());
-                tvSunsetValue.setText(new Time(o.getJSONObject("sys").getInt("sunset")).toString());
+                tvTemperatureValue.setText(String.format("%s %s", o.getJSONObject("temp").getDouble("day"), "℃"));
+                tvFeelsLikeValue.setText(String.format("%s %s", o.getJSONObject("feels_like").getDouble("day"), "℃"));
+                tvWindSpeedValue.setText(String.format("%s %s", o.getDouble("wind_speed"), "м/c"));
+                tvCloudsValue.setText(String.format("%s%s", o.getDouble("clouds"), "%"));
+                tvPressureValue.setText(String.format("%s %s", o.getDouble("pressure"), "мм рт. ст."));
+                tvSunriseValue.setText(DateFormat.format("HH:mm:ss", new Date(o.getInt("sunrise") * 1000L)).toString());
+                tvSunsetValue.setText(DateFormat.format("HH:mm:ss", new Date(o.getInt("sunset") * 1000L)).toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }

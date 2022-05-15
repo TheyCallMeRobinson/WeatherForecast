@@ -7,6 +7,7 @@ public class ForecastListItem {
     private String description;
     private String temperature;
     private String date;
+    private Long dateUtc;
 
     public ForecastListItem(Drawable weatherImage, String description, String temperature, String date) {
         this.weatherImage = weatherImage;
@@ -31,6 +32,10 @@ public class ForecastListItem {
         return date;
     }
 
+    public Long getDateUtc() {
+        return dateUtc;
+    }
+
     public void setWeatherImage(Drawable weatherImage) {
         this.weatherImage = weatherImage;
     }
@@ -45,5 +50,9 @@ public class ForecastListItem {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public void setDateUtc(Long dateUtc) {
+        this.dateUtc = dateUtc;
     }
 }

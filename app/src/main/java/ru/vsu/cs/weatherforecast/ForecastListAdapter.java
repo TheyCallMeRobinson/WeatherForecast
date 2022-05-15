@@ -3,6 +3,7 @@ package ru.vsu.cs.weatherforecast;
 import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,21 +13,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import ru.vsu.cs.weatherforecast.listener.OnItemListener;
+
 public class ForecastListAdapter extends RecyclerView.Adapter<ForecastListAdapter.ViewHolder> {
 
     private final LayoutInflater inflater;
     private final List<ForecastListItem> list;
+    private final OnItemListener onItemListener;
 
-    public ForecastListAdapter(@NonNull Activity context, List<ForecastListItem> list) {
+    public ForecastListAdapter(@NonNull Activity context, List<ForecastListItem> list, OnItemListener onItemListener) {
         this.inflater = LayoutInflater.from(context);
         this.list = list;
+        this.onItemListener = onItemListener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.forecast_list_item, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, onItemListener);
     }
 
     @Override
@@ -43,18 +48,26 @@ public class ForecastListAdapter extends RecyclerView.Adapter<ForecastListAdapte
         return list.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
         final TextView tvDescription;
         final TextView tvTemperature;
         final TextView tvDate;
         final ImageView ivWeatherImage;
+        OnItemListener onItemListener;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, OnItemListener onItemListener) {
             super(itemView);
             this.tvDescription = (TextView) itemView.findViewById(R.id.weatherDescriptionItem);
             this.tvTemperature = (TextView) itemView.findViewById(R.id.temperatureItem);
             this.tvDate = (TextView) itemView.findViewById(R.id.weekdayItem);
             this.ivWeatherImage = (ImageView) itemView.findViewById(R.id.weatherImageItem);
+            this.onItemListener = onItemListener;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            onItemListener.onItemClick(getAdapterPosition());
         }
     }
 }

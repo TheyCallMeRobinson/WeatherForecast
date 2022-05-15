@@ -1,6 +1,5 @@
 package ru.vsu.cs.weatherforecast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,7 +8,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -30,8 +28,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class ForecastList extends AppCompatActivity {
+import ru.vsu.cs.weatherforecast.listener.OnItemListener;
+import ru.vsu.cs.weatherforecast.util.AppUtils;
 
+public class ForecastList extends AppCompatActivity implements OnItemListener {
     private Double longitude;
     private Double latitude;
     private String cityName;
@@ -60,36 +60,23 @@ public class ForecastList extends AppCompatActivity {
         cityName = (String) extras.get("cityName");
     }
 
-    private void setUpViews() {
-        ForecastListAdapter fla = new ForecastListAdapter(this, list);
-        forecastList = findViewById(R.id.forecastList);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(forecastList.getContext(),
-                1);
-        forecastList.addItemDecoration(dividerItemDecoration);
-        forecastList.setAdapter(fla);
+    @Override
+    public void onItemClick(int position) {
+        //Toast.makeText(this,"Item " + position, Toast.LENGTH_SHORT).show();
+        Intent toDetailedForecastData = new Intent(this, ForecastData.class);
+        toDetailedForecastData.putExtra("longitude", longitude);
+        toDetailedForecastData.putExtra("latitude", latitude);
+        toDetailedForecastData.putExtra("cityName", cityName);
+        toDetailedForecastData.putExtra("position", position);
+        startActivity(toDetailedForecastData);
     }
 
-    private void setUpListeners() {
-        forecastList.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-                int pos = forecastList.getChildLayoutPosition(rv);
-                Toast.makeText(ForecastList.this, "Position " + pos, Toast.LENGTH_SHORT).show();
-                Intent toForecastView = new Intent(ForecastList.this, ForecastData.class);
-                toForecastView.putExtra("latitude", latitude);
-                toForecastView.putExtra("longitude", longitude);
-                toForecastView.putExtra("cityName", cityName);
-                startActivity(toForecastView);
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
-        });
+    private void setUpViews() {
+        ForecastListAdapter forecastListAdapter = new ForecastListAdapter(this, list, this);
+        forecastList = findViewById(R.id.forecastList);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(forecastList.getContext(), 1);
+        forecastList.addItemDecoration(dividerItemDecoration);
+        forecastList.setAdapter(forecastListAdapter);
     }
 
     private void getDataFromApi() {
@@ -168,7 +155,6 @@ public class ForecastList extends AppCompatActivity {
                 e.printStackTrace();
             }
             setUpViews();
-            setUpListeners();
             progressBar.setVisibility(ProgressBar.INVISIBLE);
         }
     }

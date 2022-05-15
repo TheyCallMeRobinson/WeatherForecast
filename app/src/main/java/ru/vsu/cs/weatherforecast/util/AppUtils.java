@@ -1,4 +1,4 @@
-package ru.vsu.cs.weatherforecast;
+package ru.vsu.cs.weatherforecast.util;
 
 public class AppUtils {
     public static String firstUpperCase(String word){

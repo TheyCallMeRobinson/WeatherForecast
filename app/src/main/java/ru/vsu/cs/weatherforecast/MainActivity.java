@@ -56,64 +56,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
-        btnGetForecastForToday.setOnClickListener(v -> {
-            progressBar.setVisibility(ProgressBar.VISIBLE);
-            if (etCityName.getText().toString().trim().equals("")) {
-                Toast.makeText(MainActivity.this, R.string.requestUserInput, Toast.LENGTH_SHORT).show();
-            } else {
-                Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
-                try {
-                    List<Address> addresses = geocoder.getFromLocationName(etCityName.getText().toString(), 1);
-                    if (addresses.size() == 0) {
-                        Toast.makeText(MainActivity.this, R.string.checkInput, Toast.LENGTH_SHORT).show();
-                    } else {
-                        Double latitude = addresses.get(0).getLatitude();
-                        Double longitude = addresses.get(0).getLongitude();
-                        Intent toForecastView = new Intent(MainActivity.this, ForecastData.class);
-                        toForecastView.putExtra("latitude", latitude);
-                        toForecastView.putExtra("longitude", longitude);
-                        toForecastView.putExtra("cityName", etCityName.getText().toString());
-                        toForecastView.putExtra("days", 7);
-                        startActivity(toForecastView);
-                    }
-                } catch (IOException e) {
-                    Toast.makeText(MainActivity.this, R.string.checkInput, Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(ProgressBar.INVISIBLE);
-                    e.printStackTrace();
-                }
-            }
-            progressBar.setVisibility(ProgressBar.INVISIBLE);
-        });
-        btnGetForecastForWeek.setOnClickListener(v -> {
-            progressBar.setVisibility(ProgressBar.VISIBLE);
-            if (etCityName.getText().toString().trim().equals("")) {
-                Toast.makeText(MainActivity.this, R.string.requestUserInput, Toast.LENGTH_SHORT).show();
-            } else {
-                Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
-                try {
-                    List<Address> addresses = geocoder.getFromLocationName(etCityName.getText().toString(), 1);
-                    if (addresses.size() == 0) {
-                        Toast.makeText(MainActivity.this, R.string.checkInput, Toast.LENGTH_SHORT).show();
-                    } else {
-                        Double latitude = addresses.get(0).getLatitude();
-                        Double longitude = addresses.get(0).getLongitude();
-                        Intent toForecastView = new Intent(MainActivity.this, ForecastList.class);
-                        toForecastView.putExtra("latitude", latitude);
-                        toForecastView.putExtra("longitude", longitude);
-                        toForecastView.putExtra("cityName", etCityName.getText().toString());
-                        toForecastView.putExtra("days", 7);
-                        startActivity(toForecastView);
-                    }//implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
-                } catch (IOException e) {
-                    progressBar.setVisibility(ProgressBar.INVISIBLE);
-                    Toast.makeText(MainActivity.this, R.string.connectionIssue, Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-            }
-            progressBar.setVisibility(ProgressBar.INVISIBLE);
-        });
+        btnGetForecastForToday.setOnClickListener(v -> buttonHandler(MainActivity.this, ForecastData.class));
+        btnGetForecastForWeek.setOnClickListener(v -> buttonHandler(MainActivity.this, ForecastList.class));
     }
 
+    private void buttonHandler(Context context, Class<?> cls) {
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+        if (etCityName.getText().toString().trim().equals("")) {
+            Toast.makeText(MainActivity.this, R.string.requestUserInput, Toast.LENGTH_SHORT).show();
+        } else {
+            Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
+            try {
+                List<Address> addresses = geocoder.getFromLocationName(etCityName.getText().toString(), 1);
+                if (addresses.size() == 0) {
+                    Toast.makeText(MainActivity.this, R.string.checkInput, Toast.LENGTH_SHORT).show();
+                } else {
+                    Double latitude = addresses.get(0).getLatitude();
+                    Double longitude = addresses.get(0).getLongitude();
+                    Intent toForecastView = new Intent(context, cls);
+                    toForecastView.putExtra("latitude", latitude);
+                    toForecastView.putExtra("longitude", longitude);
+                    toForecastView.putExtra("position", 0);
+                    toForecastView.putExtra("cityName", etCityName.getText().toString());
+                    startActivity(toForecastView);
+                }//implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
+            } catch (IOException e) {
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                Toast.makeText(MainActivity.this, R.string.connectionIssue, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+        progressBar.setVisibility(ProgressBar.INVISIBLE);
+    }
 
     @Override
     protected void onResume() {
@@ -125,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 1000, 10, locationListener);
         locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER, 1000 * 10, 10,
+                LocationManager.NETWORK_PROVIDER, 1000, 10,
                 locationListener);
     }
 
@@ -135,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         locationManager.removeUpdates(locationListener);
     }
 
-    private LocationListener locationListener = new LocationListener() {
+    private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
             String cityName;
