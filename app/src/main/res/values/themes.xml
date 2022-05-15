@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.WeatherForecast" parent="Theme.Design.Light.NoActionBar">
         <item name="colorPrimary">@color/blue</item>
-        <item name="colorPrimaryDark">@color/darkBlue</item>
+        <item name="colorPrimaryDark">@color/accent</item>
         <item name="colorAccent">@color/darkBlue</item>
     </style>
 </resources>

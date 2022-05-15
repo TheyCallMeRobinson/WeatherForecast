@@ -21,4 +21,8 @@
     <string name="cloudsHeader">Облака %</string>
     <string name="windSpeedHeader">Скорость ветра</string>
     <string name="weather_picture">weather picture</string>
+    <string name="title_location_permission">Приложение запрашивает доступ к данным геолокации</string>
+    <string name="text_location_permission">Разрешить?</string>
+    <string name="ok">Да</string>
+    <string name="location_determined">Мы автоматически определили ваше местоположение:</string>
 </resources>

@@ -78,6 +78,7 @@
     <TextView
         android:id="@+id/tvCityName"
         style="@style/Text.ForecastTextView"
+        android:layout_marginStart="0dp"
         app:layout_constraintStart_toEndOf="@+id/tvWeatherInCity"
         app:layout_constraintTop_toTopOf="parent" />
 

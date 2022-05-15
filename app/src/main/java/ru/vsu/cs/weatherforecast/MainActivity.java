@@ -1,10 +1,17 @@
 package ru.vsu.cs.weatherforecast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -12,6 +19,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -26,13 +34,14 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private AutoCompleteTextView etCityName;
     private Button btnGetForecastForToday;
     private Button btnGetForecastForWeek;
     private LocationManager locationManager;
     private ProgressBar progressBar;
 
-    private static final String[] CITIES = new String[] {
+    private static final String[] CITIES = new String[]{
             "Moskow", "Kiyv", "Berlin", "London", "Paris", "Warsaw", "New York", "Hong Kong", "Tokyo"
     };
 
@@ -40,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        checkLocationPermission();
         setUpViews();
         setListeners();
     }
@@ -89,24 +99,84 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(ProgressBar.INVISIBLE);
     }
 
+    public boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.title_location_permission)
+                        .setMessage(R.string.text_location_permission)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //Prompt the user once explanation has been shown
+                                ActivityCompat.requestPermissions(MainActivity.this,
+                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
+                            }
+                        })
+                        .create()
+                        .show();
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            ) {
+                if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    //Request location updates:
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                            1000, 10, locationListener);
+                    locationManager.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER, 400, 10,
+                            locationListener);
+                }
+            }
+            return;
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    400, 10, locationListener);
+            locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, 400, 10,
+                    locationListener);
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                1000, 10, locationListener);
-        locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER, 1000, 10,
-                locationListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        locationManager.removeUpdates(locationListener);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+
+            locationManager.removeUpdates(locationListener);
+        }
     }
 
     private final LocationListener locationListener = new LocationListener() {
@@ -121,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
                 if (addresses.size() > 0) {
                     System.out.println(addresses.get(0).getLocality());
                     cityName = addresses.get(0).getLocality();
+                    Toast.makeText(MainActivity.this, getString(R.string.location_determined) + " " + cityName, Toast.LENGTH_SHORT).show();
                     etCityName.setText(cityName);
                 }
             }

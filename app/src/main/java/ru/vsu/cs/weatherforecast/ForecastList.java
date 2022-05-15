@@ -147,7 +147,7 @@ public class ForecastList extends AppCompatActivity implements OnItemListener {
                             pic,
                             AppUtils.firstUpperCase(description),
                             temp,
-                            new SimpleDateFormat("dd.MM.yy", Locale.getDefault()).format(new Date(date))
+                            new SimpleDateFormat("dd.MM.yy\nEEE", Locale.getDefault()).format(new Date(date))
                     );
                     list.add(fli);
                 }

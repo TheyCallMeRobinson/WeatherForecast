@@ -9,4 +9,5 @@
     <color name="white_light_pale">#B3FFFFFF</color>
     <color name="sky_blue">#E6F0FF</color>
     <color name="black_pale">#27000000</color>
+    <color name="accent">#2B4679</color>
 </resources>
