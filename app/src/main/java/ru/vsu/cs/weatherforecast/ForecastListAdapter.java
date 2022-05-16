@@ -57,10 +57,10 @@ public class ForecastListAdapter extends RecyclerView.Adapter<ForecastListAdapte
 
         public ViewHolder(@NonNull View itemView, OnItemListener onItemListener) {
             super(itemView);
-            this.tvDescription = (TextView) itemView.findViewById(R.id.weatherDescriptionItem);
-            this.tvTemperature = (TextView) itemView.findViewById(R.id.temperatureItem);
-            this.tvDate = (TextView) itemView.findViewById(R.id.weekdayItem);
-            this.ivWeatherImage = (ImageView) itemView.findViewById(R.id.weatherImageItem);
+            this.tvDescription = itemView.findViewById(R.id.weatherDescriptionItem);
+            this.tvTemperature = itemView.findViewById(R.id.temperatureItem);
+            this.tvDate = itemView.findViewById(R.id.weekdayItem);
+            this.ivWeatherImage = itemView.findViewById(R.id.weatherImageItem);
             this.onItemListener = onItemListener;
             itemView.setOnClickListener(this);
         }

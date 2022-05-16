@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
@@ -114,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(MainActivity.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                         MY_PERMISSIONS_REQUEST_LOCATION);
@@ -143,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
                 if (ContextCompat.checkSelfPermission(this,
                         Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED) {
-                    //Request location updates:
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                             1000, 10, locationListener);
                     locationManager.requestLocationUpdates(
@@ -151,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
                             locationListener);
                 }
             }
-            return;
         }
     }
     @Override
@@ -182,21 +178,22 @@ public class MainActivity extends AppCompatActivity {
     private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            String cityName;
-            Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
-            List<Address> addresses;
-            try {
-                addresses = geocoder.getFromLocation(location.getLatitude(),
-                        location.getLongitude(), 1);
-                if (addresses.size() > 0) {
-                    System.out.println(addresses.get(0).getLocality());
-                    cityName = addresses.get(0).getLocality();
-                    Toast.makeText(MainActivity.this, getString(R.string.location_determined) + " " + cityName, Toast.LENGTH_SHORT).show();
-                    etCityName.setText(cityName);
+            if (etCityName.getText() != null) {
+                String cityName;
+                Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
+                List<Address> addresses;
+                try {
+                    addresses = geocoder.getFromLocation(location.getLatitude(),
+                            location.getLongitude(), 1);
+                    if (addresses.size() > 0) {
+                        System.out.println(addresses.get(0).getLocality());
+                        cityName = addresses.get(0).getLocality();
+                        Toast.makeText(MainActivity.this, getString(R.string.location_determined) + " " + cityName, Toast.LENGTH_SHORT).show();
+                        etCityName.setText(cityName);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }
-            catch (IOException e) {
-                e.printStackTrace();
             }
         }
 
