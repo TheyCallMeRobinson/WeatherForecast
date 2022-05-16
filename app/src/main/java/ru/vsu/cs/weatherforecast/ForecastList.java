@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +27,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import ru.vsu.cs.weatherforecast.adapter.ForecastListAdapter;
 import ru.vsu.cs.weatherforecast.listener.OnItemListener;
+import ru.vsu.cs.weatherforecast.model.ForecastListItem;
 import ru.vsu.cs.weatherforecast.util.AppUtils;
 
 public class ForecastList extends AppCompatActivity implements OnItemListener {
@@ -141,13 +142,14 @@ public class ForecastList extends AppCompatActivity implements OnItemListener {
                     pic.setBounds(0, 0, 75, 75);
                     String description = arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("description");
                     double temperature = arr.getJSONObject(i).getJSONObject("temp").getDouble("day");
-                    String temp = (temperature > 0 ? "+" : "-") + temperature + "℃";
+                    String temp = String.format(Locale.getDefault(), "%s%.1f%s", temperature > 0 ? "+" : "-", temperature, "℃");
+
                     long date = arr.getJSONObject(i).getInt("dt") * 1000L;
                     ForecastListItem fli = new ForecastListItem(
                             pic,
                             AppUtils.firstUpperCase(description),
                             temp,
-                            new SimpleDateFormat("dd.MM.yy\nEEE", Locale.getDefault()).format(new Date(date))
+                            new SimpleDateFormat("dd.MM\nEEE", Locale.getDefault()).format(new Date(date))
                     );
                     list.add(fli);
                 }

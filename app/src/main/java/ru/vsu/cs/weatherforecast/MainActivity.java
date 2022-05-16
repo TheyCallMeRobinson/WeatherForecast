@@ -1,15 +1,14 @@
 package ru.vsu.cs.weatherforecast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,22 +18,24 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import ru.vsu.cs.weatherforecast.util.AppUtils;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private TextView tvMainTextView;
     private AutoCompleteTextView etCityName;
     private Button btnGetForecastForToday;
     private Button btnGetForecastForWeek;
@@ -49,17 +50,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        checkLocationPermission();
         setUpViews();
+        startAnimations();
+        checkLocationPermission();
         setListeners();
     }
 
+    private void startAnimations() {
+        AnimatorSet setFirst = new AnimatorSet();
+        List<Animator> animators = AppUtils.getFadeInAnimatorsForViews(2000, tvMainTextView);
+        animators.addAll(AppUtils.getFadeInAnimatorsForViews(500, etCityName, btnGetForecastForToday, btnGetForecastForWeek));
+        setFirst.playSequentially(animators);
+        setFirst.start();
+    }
+
     private void setUpViews() {
+        tvMainTextView = findViewById(R.id.tvMainTextView);
         etCityName = findViewById(R.id.etCityName);
         btnGetForecastForToday = findViewById(R.id.btnGetForecastForToday);
         btnGetForecastForWeek = findViewById(R.id.btnGetForecastForWeek);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         progressBar = findViewById(R.id.progressBarMain);
+        etCityName.setAlpha(0.0f);
+        btnGetForecastForWeek.setAlpha(0.0f);
+        btnGetForecastForToday.setAlpha(0.0f);
+
         ArrayAdapter<String> citiesAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, CITIES);
         etCityName.setAdapter(citiesAdapter);
@@ -178,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
     private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            if (etCityName.getText() != null) {
+            if ("".equals(etCityName.getText().toString())) {
                 String cityName;
                 Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
                 List<Address> addresses;

@@ -1,4 +1,4 @@
-package ru.vsu.cs.weatherforecast;
+package ru.vsu.cs.weatherforecast.adapter;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import ru.vsu.cs.weatherforecast.R;
 import ru.vsu.cs.weatherforecast.listener.OnItemListener;
+import ru.vsu.cs.weatherforecast.model.ForecastListItem;
 
 public class ForecastListAdapter extends RecyclerView.Adapter<ForecastListAdapter.ViewHolder> {
 

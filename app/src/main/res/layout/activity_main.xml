@@ -5,10 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="@drawable/background_img">
+    android:background="@drawable/background_img"
+    android:id="@+id/mainLayout"
+    >
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tvMainTextView"
         style="@style/Text.MainTextView"
         android:text="@string/weatherInYourCity"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,7 +23,7 @@
         android:hint="@string/inputCity"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/tvMainTextView" />
 
     <Button
         android:id="@+id/btnGetForecastForToday"
