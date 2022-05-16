@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WeatherForecast</string>
+    <string name="app_name">Погода</string>
     <string name="inputCity">Введите город</string>
     <string name="weatherInYourCity">Погода в вашем городе</string>
     <string name="getForecastForToday">Узнать на сегодня</string>
