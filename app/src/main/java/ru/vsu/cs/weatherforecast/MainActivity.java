@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         etCityName.setAlpha(0.0f);
         btnGetForecastForWeek.setAlpha(0.0f);
         btnGetForecastForToday.setAlpha(0.0f);
-
         ArrayAdapter<String> citiesAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, CITIES);
         etCityName.setAdapter(citiesAdapter);
@@ -221,5 +220,4 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {}
     };
-
 }

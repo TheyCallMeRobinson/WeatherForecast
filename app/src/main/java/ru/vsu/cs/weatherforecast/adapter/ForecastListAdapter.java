@@ -1,14 +1,19 @@
 package ru.vsu.cs.weatherforecast.adapter;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -42,7 +47,25 @@ public class ForecastListAdapter extends RecyclerView.Adapter<ForecastListAdapte
         holder.tvTemperature.setText(item.getTemperature());
         holder.tvDescription.setText(item.getDescription());
         holder.tvDate.setText(item.getDate());
-        holder.ivWeatherImage.setImageDrawable(item.getWeatherImage());
+        holder.ivWeatherImage.setImageBitmap(item.getWeatherImage());
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position, List<Object> pic) {
+        ForecastListItem item = list.get(position);
+        holder.tvTemperature.setText(item.getTemperature());
+        holder.tvDescription.setText(item.getDescription());
+        holder.tvDate.setText(item.getDate());
+        holder.ivWeatherImage.setImageBitmap(item.getWeatherImage());
+        if(pic.size() > 0 && pic.get(0) != null) {
+            holder.pbPicture.setVisibility(View.INVISIBLE);
+            holder.ivWeatherImage.setVisibility(View.VISIBLE);
+            holder.ivWeatherImage.setImageBitmap((Bitmap) pic.get(0));
+        }
+        else {
+            holder.pbPicture.setVisibility(View.VISIBLE);
+            holder.ivWeatherImage.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -55,10 +78,12 @@ public class ForecastListAdapter extends RecyclerView.Adapter<ForecastListAdapte
         final TextView tvTemperature;
         final TextView tvDate;
         final ImageView ivWeatherImage;
+        final ProgressBar pbPicture;
         OnItemListener onItemListener;
 
         public ViewHolder(@NonNull View itemView, OnItemListener onItemListener) {
             super(itemView);
+            this.pbPicture = itemView.findViewById(R.id.pictureProgressBarItem);
             this.tvDescription = itemView.findViewById(R.id.weatherDescriptionItem);
             this.tvTemperature = itemView.findViewById(R.id.temperatureItem);
             this.tvDate = itemView.findViewById(R.id.weekdayItem);

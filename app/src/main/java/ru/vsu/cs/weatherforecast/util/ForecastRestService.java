@@ -1,14 +1,12 @@
 package ru.vsu.cs.weatherforecast.util;
 
-import android.graphics.drawable.Drawable;
 
-import org.json.JSONObject;
-
+import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 import ru.vsu.cs.weatherforecast.model.response.WeatherApiFullResponse;
 
 public interface ForecastRestService {
@@ -22,6 +20,6 @@ public interface ForecastRestService {
             @Query("lang") String language
     );
 
-    @GET("/img/wn/{pic_name}@2x.png")
-    Call<Drawable> getDrawable(@Path("pic_name") String picName);
+    @GET
+    Call<ResponseBody> getListPicture(@Url String url);
 }

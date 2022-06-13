@@ -11,47 +11,67 @@
     android:background="@color/white_pale"
     >
 
-    <ImageView
-        android:id="@+id/weatherImageItem"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:contentDescription="@string/weather_picture" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:minHeight="75dp"
-        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/weatherImageItem"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="75dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/weekdayItem"
+            app:layout_constraintStart_toEndOf="@+id/weatherImageItem"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/weatherDescriptionItem"
+                style="@style/Text.ForecastListTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="Rainy"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/temperatureItem"
+                style="@style/Text.ForecastListTemperature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="+6 C"
+                android:textAlignment="inherit"
+                android:textSize="18sp" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/weatherDescriptionItem"
-            style="@style/Text.ForecastListTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:text="Rainy"
-            android:textSize="20sp" />
+            android:id="@+id/weekdayItem"
+            style="@style/Text.ForecastListDate"
+            android:layout_width="wrap_content"
+            android:layout_height="75dp"
+            android:minWidth="100dp"
+            android:text="01.01.1970\nTue"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/temperatureItem"
-            style="@style/Text.ForecastListTemperature"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="+6 C"
-            android:textAlignment="inherit"
-            android:textSize="18sp" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/weekdayItem"
-        style="@style/Text.ForecastListDate"
-        android:layout_width="90dp"
-        android:layout_height="match_parent"
-        android:minWidth="50dp"
-        android:text="01.01.1970\nTue"
-        android:textAlignment="center" />
+        <ProgressBar
+            android:id="@+id/pictureProgressBarItem"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="visible" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

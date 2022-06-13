@@ -1,36 +1,40 @@
 package ru.vsu.cs.weatherforecast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.vsu.cs.weatherforecast.adapter.ForecastListAdapter;
 import ru.vsu.cs.weatherforecast.listener.OnItemListener;
 import ru.vsu.cs.weatherforecast.model.ForecastListItem;
+import ru.vsu.cs.weatherforecast.model.response.WeatherApiFullResponse;
+import ru.vsu.cs.weatherforecast.model.response.WeatherDailyResponse;
 import ru.vsu.cs.weatherforecast.util.AppUtils;
+import ru.vsu.cs.weatherforecast.util.ForecastRestService;
 
 public class ForecastList extends AppCompatActivity implements OnItemListener {
     private Double longitude;
@@ -39,6 +43,8 @@ public class ForecastList extends AppCompatActivity implements OnItemListener {
     private RecyclerView forecastList;
     private ProgressBar progressBar;
     private List<ForecastListItem> list = new ArrayList<>();
+
+    private List<String> picNames = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,91 +79,136 @@ public class ForecastList extends AppCompatActivity implements OnItemListener {
     private void setUpViews() {
         ForecastListAdapter forecastListAdapter = new ForecastListAdapter(this, list, this);
         forecastList = findViewById(R.id.forecastList);
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        forecastList.setLayoutManager(manager);
+        forecastList.setHasFixedSize(true);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(forecastList.getContext(), 1);
         forecastList.addItemDecoration(dividerItemDecoration);
         forecastList.setAdapter(forecastListAdapter);
     }
 
     private void getDataFromApi() {
-        String urlJsonData = "https://api.openweathermap.org/data/2.5/onecall" +
-                "?lat=" + latitude +
-                "&lon=" + longitude +
-                "&exclude=minutely,hourly,alert" +
-                "&appid=" + AppUtils.WEATHER_API_KEY +
-                "&units=metric&lang=ru";
-        new GetAPIData().execute(urlJsonData);
+        ForecastRestService service = AppUtils.retrofit.create(ForecastRestService.class);
+        Call<WeatherApiFullResponse> jsonObjectCall = service.getForecast(latitude, longitude, "minutely,hourly,alerts", AppUtils.WEATHER_API_KEY, "metric", "ru");
+        jsonObjectCall.enqueue(new Callback<WeatherApiFullResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<WeatherApiFullResponse> call, @NonNull Response<WeatherApiFullResponse> response) {
+                if(response.body() != null) {
+                    for(WeatherDailyResponse day : response.body().getDailyList()) {
+                        picNames.add(day.getWeather().get(0).getIcon());
+                        String description = day.getWeather().get(0).getDescription();
+                        Double temperature = day.getTemp().getDay();
+                        String strTemperature = String.format(Locale.getDefault(), "%s%.1f%s", temperature > 0 ? "+" : "-", temperature, "℃");
+                        Long date = day.getDatetime() * 1000L;
+                        ForecastListItem fli = new ForecastListItem(
+                                null,
+                                AppUtils.firstUpperCase(description),
+                                strTemperature,
+                                new SimpleDateFormat("dd.MM\nEEE", Locale.getDefault()).format(new Date(date))
+                        );
+                        list.add(fli);
+                    }
+                }
+                progressBar.setVisibility(View.INVISIBLE);
+                setUpViews();
+                getPicturesFromApi();
+            }
+            @Override
+            public void onFailure(@NonNull Call<WeatherApiFullResponse> call, @NonNull Throwable t) {
+                Toast.makeText(ForecastList.this, "Что-то пошло не так", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private class GetAPIData extends AsyncTask<String, String, String> {
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-
-            try {
-                URL url = new URL(strings[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
-
-                InputStream stream = connection.getInputStream();
-                reader = new BufferedReader(new InputStreamReader(stream));
-
-                StringBuilder builder = new StringBuilder();
-                String line;
-                while((line = reader.readLine()) != null) {
-                    builder.append(line).append("\n");
+    private void getPicturesFromApi() {
+        ForecastRestService service = AppUtils.retrofit.create(ForecastRestService.class);
+        for(int i = 0; i < picNames.size(); i++) {
+            Call<ResponseBody> picCall = service.getListPicture(AppUtils.PIC_API_URL + picNames.get(i) + "@2x.png");
+            int finalI = i;
+            picCall.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Bitmap btm = BitmapFactory.decodeStream(response.body().byteStream());
+                        forecastList.getAdapter().notifyItemChanged(finalI, btm);
+                    }
                 }
-                return builder.toString();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (connection != null)
-                    connection.disconnect();
-                try {
-                    if (reader != null)
-                        reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            try {
-                JSONObject o = new JSONObject(s);
-                longitude = o.getDouble("lon");
-                latitude = o.getDouble("lat");
-                JSONArray arr = o.getJSONArray("daily");
-                for (int i = 0; i < arr.length(); i++) {
-                    Drawable pic = new GetAPIPicture().execute(arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("icon")).get();
-                    pic.setBounds(0, 0, 75, 75);
-                    String description = arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("description");
-                    double temperature = arr.getJSONObject(i).getJSONObject("temp").getDouble("day");
-                    String temp = String.format(Locale.getDefault(), "%s%.1f%s", temperature > 0 ? "+" : "-", temperature, "℃");
-
-                    long date = arr.getJSONObject(i).getInt("dt") * 1000L;
-                    ForecastListItem fli = new ForecastListItem(
-                        pic,
-                        AppUtils.firstUpperCase(description),
-                        temp,
-                        new SimpleDateFormat("dd.MM\nEEE", Locale.getDefault()).format(new Date(date))
-                    );
-                    list.add(fli);
-                }
-            } catch (JSONException | ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
-            setUpViews();
-            progressBar.setVisibility(ProgressBar.INVISIBLE);
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {}
+            });
         }
     }
+
+//    private class GetAPIData extends AsyncTask<String, String, String> {
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected String doInBackground(String... strings) {
+//            HttpURLConnection connection = null;
+//            BufferedReader reader = null;
+//
+//            try {
+//                URL url = new URL(strings[0]);
+//                connection = (HttpURLConnection) url.openConnection();
+//                connection.connect();
+//
+//                InputStream stream = connection.getInputStream();
+//                reader = new BufferedReader(new InputStreamReader(stream));
+//
+//                StringBuilder builder = new StringBuilder();
+//                String line;
+//                while((line = reader.readLine()) != null) {
+//                    builder.append(line).append("\n");
+//                }
+//                return builder.toString();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } finally {
+//                if (connection != null)
+//                    connection.disconnect();
+//                try {
+//                    if (reader != null)
+//                        reader.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            super.onPostExecute(s);
+//            try {
+//                JSONObject o = new JSONObject(s);
+//                longitude = o.getDouble("lon");
+//                latitude = o.getDouble("lat");
+//                JSONArray arr = o.getJSONArray("daily");
+//                for (int i = 0; i < arr.length(); i++) {
+//                    Drawable pic = new GetAPIPicture().execute(arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("icon")).get();
+//                    pic.setBounds(0, 0, 75, 75);
+//                    String description = arr.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getString("description");
+//                    double temperature = arr.getJSONObject(i).getJSONObject("temp").getDouble("day");
+//                    String temp = String.format(Locale.getDefault(), "%s%.1f%s", temperature > 0 ? "+" : "-", temperature, "℃");
+//
+//                    long date = arr.getJSONObject(i).getInt("dt") * 1000L;
+//                    ForecastListItem fli = new ForecastListItem(
+//                        pic,
+//                        AppUtils.firstUpperCase(description),
+//                        temp,
+//                        new SimpleDateFormat("dd.MM\nEEE", Locale.getDefault()).format(new Date(date))
+//                    );
+//                    list.add(fli);
+//                }
+//            } catch (JSONException | ExecutionException | InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            setUpViews();
+//            progressBar.setVisibility(ProgressBar.INVISIBLE);
+//        }
+//    }
 
     private class GetAPIPicture extends AsyncTask<String, Void, Drawable> {
         @Override
