@@ -40,8 +40,6 @@ public class ForecastList extends AppCompatActivity implements OnItemListener {
     private ProgressBar progressBar;
     private List<ForecastListItem> list = new ArrayList<>();
 
-    private static final String WEATHER_API_KEY = "4ee0653bd41375d67d0527057889f757";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +83,7 @@ public class ForecastList extends AppCompatActivity implements OnItemListener {
                 "?lat=" + latitude +
                 "&lon=" + longitude +
                 "&exclude=minutely,hourly,alert" +
-                "&appid=" + WEATHER_API_KEY +
+                "&appid=" + AppUtils.WEATHER_API_KEY +
                 "&units=metric&lang=ru";
         new GetAPIData().execute(urlJsonData);
     }
@@ -146,10 +144,10 @@ public class ForecastList extends AppCompatActivity implements OnItemListener {
 
                     long date = arr.getJSONObject(i).getInt("dt") * 1000L;
                     ForecastListItem fli = new ForecastListItem(
-                            pic,
-                            AppUtils.firstUpperCase(description),
-                            temp,
-                            new SimpleDateFormat("dd.MM\nEEE", Locale.getDefault()).format(new Date(date))
+                        pic,
+                        AppUtils.firstUpperCase(description),
+                        temp,
+                        new SimpleDateFormat("dd.MM\nEEE", Locale.getDefault()).format(new Date(date))
                     );
                     list.add(fli);
                 }

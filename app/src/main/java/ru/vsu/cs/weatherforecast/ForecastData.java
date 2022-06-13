@@ -1,26 +1,24 @@
 package ru.vsu.cs.weatherforecast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.sql.Time;
 import java.util.Date;
 
-public class ForecastData extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ru.vsu.cs.weatherforecast.model.response.WeatherApiFullResponse;
+import ru.vsu.cs.weatherforecast.model.response.WeatherDailyResponse;
+import ru.vsu.cs.weatherforecast.util.AppUtils;
+import ru.vsu.cs.weatherforecast.util.ForecastRestService;
 
+public class ForecastData extends AppCompatActivity {
     private Double latitude;
     private Double longitude;
     private String cityName;
@@ -34,8 +32,6 @@ public class ForecastData extends AppCompatActivity {
     private TextView tvPressureValue;
     private TextView tvSunriseValue;
     private TextView tvSunsetValue;
-
-    private static final String WEATHER_API_KEY = "4ee0653bd41375d67d0527057889f757";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,73 +65,27 @@ public class ForecastData extends AppCompatActivity {
     }
 
     private void getDataFromApi() {
-        String urlJsonData = "https://api.openweathermap.org/data/2.5/onecall" +
-                "?lat=" + latitude +
-                "&lon=" + longitude +
-                "&exclude=minutely,hourly,alert" +
-                "&appid=" + WEATHER_API_KEY +
-                "&units=metric&lang=ru";
-        new GetAPIData().execute(urlJsonData);
-    }
-
-    private class GetAPIData extends AsyncTask<String, String, String> {
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-
-            try {
-                URL url = new URL(strings[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.connect();
-
-                InputStream stream = connection.getInputStream();
-                reader = new BufferedReader(new InputStreamReader(stream));
-
-                StringBuilder builder = new StringBuilder();
-                String line = "";
-                while((line = reader.readLine()) != null) {
-                    builder.append(line).append("\n");
-                }
-                return builder.toString();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-                try {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+        ForecastRestService service = AppUtils.retrofit.create(ForecastRestService.class);
+        Call<WeatherApiFullResponse> jsonObjectCall = service.getForecast(latitude, longitude, "minutely,hourly,alerts", AppUtils.WEATHER_API_KEY, "metric", "ru");
+        jsonObjectCall.enqueue(new Callback<WeatherApiFullResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<WeatherApiFullResponse> call, @NonNull Response<WeatherApiFullResponse> response) {
+                if(response.body() != null) {
+                    WeatherDailyResponse day = response.body().getDailyList().get(position);
+                    tvCityName.setText(cityName);
+                    tvTemperatureValue.setText(String.format("%s %s", day.getTemp().getDay(), "℃"));
+                    tvFeelsLikeValue.setText(String.format("%s %s", day.getFeelsLike().getDay(), "℃"));
+                    tvWindSpeedValue.setText(String.format("%s %s", day.getWindSpeed(), "м/c"));
+                    tvCloudsValue.setText(String.format("%s%s", day.getClouds(), "%"));
+                    tvPressureValue.setText(String.format("%s %s", day.getPressure(), "мм рт. ст."));
+                    tvSunriseValue.setText(DateFormat.format("HH:mm:ss", new Date(day.getSunrise() * 1000L)).toString());
+                    tvSunsetValue.setText(DateFormat.format("HH:mm:ss", new Date(day.getSunset() * 1000L)).toString());
                 }
             }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            try {
-                JSONObject o = new JSONObject(s).getJSONArray("daily").getJSONObject(position);
-                tvCityName.setText(cityName);
-                tvTemperatureValue.setText(String.format("%s %s", o.getJSONObject("temp").getDouble("day"), "℃"));
-                tvFeelsLikeValue.setText(String.format("%s %s", o.getJSONObject("feels_like").getDouble("day"), "℃"));
-                tvWindSpeedValue.setText(String.format("%s %s", o.getDouble("wind_speed"), "м/c"));
-                tvCloudsValue.setText(String.format("%s%s", o.getDouble("clouds"), "%"));
-                tvPressureValue.setText(String.format("%s %s", o.getDouble("pressure"), "мм рт. ст."));
-                tvSunriseValue.setText(DateFormat.format("HH:mm:ss", new Date(o.getInt("sunrise") * 1000L)).toString());
-                tvSunsetValue.setText(DateFormat.format("HH:mm:ss", new Date(o.getInt("sunset") * 1000L)).toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
+            @Override
+            public void onFailure(Call<WeatherApiFullResponse> call, Throwable t) {
+                Toast.makeText(ForecastData.this, "Что-то пошло не так", Toast.LENGTH_SHORT).show();
             }
-        }
+        });
     }
 }
