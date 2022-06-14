@@ -2,19 +2,44 @@ package ru.vsu.cs.weatherforecast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.icu.util.Calendar;
+import android.icu.util.TimeZone;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.text.format.Time;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IFillFormatter;
+import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.vsu.cs.weatherforecast.model.response.WeatherApiFullResponse;
-import ru.vsu.cs.weatherforecast.model.response.WeatherDailyResponse;
+import ru.vsu.cs.weatherforecast.model.response.WeatherHourBodyResponse;
+import ru.vsu.cs.weatherforecast.model.response.WeatherMainBodyResponse;
 import ru.vsu.cs.weatherforecast.util.AppUtils;
 import ru.vsu.cs.weatherforecast.util.ForecastRestService;
 
@@ -23,6 +48,9 @@ public class ForecastData extends AppCompatActivity {
     private Double longitude;
     private String cityName;
     private Integer position;
+    private WeatherMainBodyResponse weatherDayResponse;
+    private List<WeatherHourBodyResponse> weatherHourResponses;
+    private Boolean hourlyAvailable;
 
     private TextView tvCityName;
     private TextView tvTemperatureValue;
@@ -32,14 +60,31 @@ public class ForecastData extends AppCompatActivity {
     private TextView tvPressureValue;
     private TextView tvSunriseValue;
     private TextView tvSunsetValue;
+    private ProgressBar progressBar;
+    private LineChart temperatureChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast_data);
+        setEverything(View.INVISIBLE);
+        progressBar = findViewById(R.id.forecastDataProgressBar);
+        progressBar.setVisibility(View.VISIBLE);
         getExtras();
-        setupLayout();
         getDataFromApi();
+        setEverything(View.VISIBLE);
+        setupLayout();
+    }
+
+    private void setBackgroundImg(String weather) {
+        Map<String, Integer> pictures = AppUtils.getPicturesMap();
+        ConstraintLayout cl = findViewById(R.id.forecastDataMain);
+        if (pictures.get(weather.toLowerCase(Locale.ROOT)) != null) {
+            cl.setBackgroundResource(pictures.get(weather.toLowerCase(Locale.ROOT)));
+        }
+        else {
+            cl.setBackgroundResource(R.drawable.background_img);
+        }
     }
 
     private void getExtras() {
@@ -48,9 +93,11 @@ public class ForecastData extends AppCompatActivity {
         longitude = (Double) extras.get("longitude");
         cityName = (String) extras.get("cityName");
         position = (Integer) extras.get("position");
-        if (position == null) {
+        hourlyAvailable = (Boolean) extras.get("hourlyAvailable");
+        if (position == null)
             position = 0;
-        }
+        if (hourlyAvailable == null)
+            hourlyAvailable = false;
     }
 
     private void setupLayout() {
@@ -62,30 +109,100 @@ public class ForecastData extends AppCompatActivity {
         tvPressureValue = findViewById(R.id.tvPressureValue);
         tvSunriseValue = findViewById(R.id.tvSunriseValue);
         tvSunsetValue = findViewById(R.id.tvSunsetValue);
+        if (hourlyAvailable)
+            temperatureChart = findViewById(R.id.temperatureChart);
+    }
+
+    private void setData() {
+        tvCityName.setText(cityName);
+        tvTemperatureValue.setText(String.format("%s %s", weatherDayResponse.getTemp().getDay(), "℃"));
+        tvFeelsLikeValue.setText(String.format("%s %s", weatherDayResponse.getFeelsLike().getDay(), "℃"));
+        tvWindSpeedValue.setText(String.format("%s %s", weatherDayResponse.getWindSpeed(), "м/c"));
+        tvCloudsValue.setText(String.format("%s%s", weatherDayResponse.getClouds(), "%"));
+        tvPressureValue.setText(String.format("%s %s", weatherDayResponse.getPressure(), "мм рт. ст."));
+        tvSunriseValue.setText(DateFormat.format("HH:mm:ss", new Date(weatherDayResponse.getSunrise() * 1000L)).toString());
+        tvSunsetValue.setText(DateFormat.format("HH:mm:ss", new Date(weatherDayResponse.getSunset() * 1000L)).toString());
+    }
+
+    private void setChart() {
+        temperatureChart = findViewById(R.id.temperatureChart);
+        List<Entry> entries = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        for(int i = 0; i < 24; i += 2) {
+            calendar.setTime(new Date(weatherHourResponses.get(i).getDt() * 1000L));
+            //int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            entries.add(new Entry(i, weatherHourResponses.get(i).getTemp().floatValue()));
+        }
+
+        LineDataSet set1 = new LineDataSet(entries, "Temperature");
+        set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        set1.setCubicIntensity(0.2f);
+        set1.setDrawFilled(true);
+        set1.setLineWidth(1.8f);
+        set1.setCircleRadius(4f);
+        set1.setCircleColor(Color.RED);
+        set1.setColor(Color.RED);
+        set1.setFillColor(Color.RED);
+        set1.setFillAlpha(100);
+        set1.setDrawHorizontalHighlightIndicator(false);
+        set1.setDrawVerticalHighlightIndicator(false);
+        LineData data = new LineData(set1);
+
+
+        temperatureChart.setTouchEnabled(true);
+        temperatureChart.getDescription().setEnabled(false);
+        temperatureChart.getXAxis().setEnabled(false);
+        temperatureChart.setDragEnabled(false);
+        temperatureChart.setScaleEnabled(false);
+        temperatureChart.setData(data);
+        temperatureChart.animateX(1500);
+        temperatureChart.invalidate();
+        //temperatureChart.setDescription(null);
+        //temperatureChart.setDrawFilled()
     }
 
     private void getDataFromApi() {
         ForecastRestService service = AppUtils.retrofit.create(ForecastRestService.class);
-        Call<WeatherApiFullResponse> jsonObjectCall = service.getForecast(latitude, longitude, "minutely,hourly,alerts", AppUtils.WEATHER_API_KEY, "metric", "ru");
+        Call<WeatherApiFullResponse> jsonObjectCall = service.getForecast(latitude, longitude, "current,minutely,alerts", AppUtils.WEATHER_API_KEY, "metric", "ru");
         jsonObjectCall.enqueue(new Callback<WeatherApiFullResponse>() {
             @Override
             public void onResponse(@NonNull Call<WeatherApiFullResponse> call, @NonNull Response<WeatherApiFullResponse> response) {
                 if(response.body() != null) {
-                    WeatherDailyResponse day = response.body().getDailyList().get(position);
-                    tvCityName.setText(cityName);
-                    tvTemperatureValue.setText(String.format("%s %s", day.getTemp().getDay(), "℃"));
-                    tvFeelsLikeValue.setText(String.format("%s %s", day.getFeelsLike().getDay(), "℃"));
-                    tvWindSpeedValue.setText(String.format("%s %s", day.getWindSpeed(), "м/c"));
-                    tvCloudsValue.setText(String.format("%s%s", day.getClouds(), "%"));
-                    tvPressureValue.setText(String.format("%s %s", day.getPressure(), "мм рт. ст."));
-                    tvSunriseValue.setText(DateFormat.format("HH:mm:ss", new Date(day.getSunrise() * 1000L)).toString());
-                    tvSunsetValue.setText(DateFormat.format("HH:mm:ss", new Date(day.getSunset() * 1000L)).toString());
+                    WeatherMainBodyResponse day = response.body().getDailyList().get(position);
+                    weatherDayResponse = day;
+                    progressBar.setVisibility(View.INVISIBLE);
+                    setBackgroundImg(day.getWeather().get(0).getMain());
+                    setData();
+                    if (hourlyAvailable) {
+                        weatherHourResponses = response.body().getHourlyList();
+                        setChart();
+                    }
                 }
             }
             @Override
-            public void onFailure(Call<WeatherApiFullResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<WeatherApiFullResponse> call, @NonNull Throwable t) {
                 Toast.makeText(ForecastData.this, "Что-то пошло не так", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void setEverything(Integer visible) {
+        TextView tvWeatherInCity = findViewById(R.id.tvWeatherInCity);
+        TextView tvTemperature = findViewById(R.id.tvTemperature);
+        TextView tvFeelsLike = findViewById(R.id.tvFeelsLike);
+        TextView tvWindSpeed = findViewById(R.id.tvWindSpeed);
+        TextView tvClouds = findViewById(R.id.tvClouds);
+        TextView tvPressure = findViewById(R.id.tvPressure);
+        TextView tvSunset = findViewById(R.id.tvSunset);
+        TextView tvSunrise = findViewById(R.id.tvSunrise);
+
+        tvWeatherInCity.setVisibility(visible);
+        tvTemperature.setVisibility(visible);
+        tvFeelsLike.setVisibility(visible);
+        tvWindSpeed.setVisibility(visible);
+        tvClouds.setVisibility(visible);
+        tvPressure.setVisibility(visible);
+        tvSunset.setVisibility(visible);
+        tvSunrise.setVisibility(visible);
     }
 }

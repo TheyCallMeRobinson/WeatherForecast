@@ -13,7 +13,7 @@ import ru.vsu.cs.weatherforecast.model.response.inner.Weather;
 
 @Getter
 @Setter
-public class WeatherDailyResponse {
+public class WeatherMainBodyResponse {
     @SerializedName("dt")
     @Expose
     Integer datetime;

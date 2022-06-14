@@ -5,11 +5,14 @@ import android.animation.ValueAnimator;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import ru.vsu.cs.weatherforecast.R;
 
 public class AppUtils {
 
@@ -40,5 +43,17 @@ public class AppUtils {
             animators.add(animator);
         }
         return animators;
+    }
+
+    public static Map<String, Integer> getPicturesMap() {
+        Map<String, Integer> pictures = new HashMap<>();
+        pictures.put("thunderstorm", R.drawable.thunderstorm);
+        pictures.put("drizzle", R.drawable.drizzle);
+        pictures.put("rain", R.drawable.drizzle);
+        pictures.put("snow", R.drawable.snow);
+        pictures.put("fog", R.drawable.fog);
+        pictures.put("clear", R.drawable.clear);
+        pictures.put("clouds", R.drawable.clouds);
+        return pictures;
     }
 }

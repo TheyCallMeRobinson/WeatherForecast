@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "ru.vsu.cs.weatherforecast"
-        minSdk 21
+        minSdk 24
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -28,6 +28,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     implementation 'androidx.appcompat:appcompat:1.4.1'

@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     toForecastView.putExtra("longitude", longitude);
                     toForecastView.putExtra("position", 0);
                     toForecastView.putExtra("cityName", etCityName.getText().toString());
+                    toForecastView.putExtra("hourlyAvailable", true);
                     startActivity(toForecastView);
                 }//implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
             } catch (IOException e) {

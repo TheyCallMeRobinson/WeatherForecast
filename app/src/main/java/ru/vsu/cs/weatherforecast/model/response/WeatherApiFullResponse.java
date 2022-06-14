@@ -21,5 +21,9 @@ public class WeatherApiFullResponse {
 
     @SerializedName("daily")
     @Expose
-    List<WeatherDailyResponse> dailyList;
+    List<WeatherMainBodyResponse> dailyList;
+
+    @SerializedName("hourly")
+    @Expose
+    List<WeatherHourBodyResponse> hourlyList;
 }

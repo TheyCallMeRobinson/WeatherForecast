@@ -32,7 +32,7 @@ import ru.vsu.cs.weatherforecast.adapter.ForecastListAdapter;
 import ru.vsu.cs.weatherforecast.listener.OnItemListener;
 import ru.vsu.cs.weatherforecast.model.ForecastListItem;
 import ru.vsu.cs.weatherforecast.model.response.WeatherApiFullResponse;
-import ru.vsu.cs.weatherforecast.model.response.WeatherDailyResponse;
+import ru.vsu.cs.weatherforecast.model.response.WeatherMainBodyResponse;
 import ru.vsu.cs.weatherforecast.util.AppUtils;
 import ru.vsu.cs.weatherforecast.util.ForecastRestService;
 
@@ -73,6 +73,8 @@ public class ForecastList extends AppCompatActivity implements OnItemListener {
         toDetailedForecastData.putExtra("latitude", latitude);
         toDetailedForecastData.putExtra("cityName", cityName);
         toDetailedForecastData.putExtra("position", position);
+        if (position == 0)
+            toDetailedForecastData.putExtra("hourlyAvailable", true);
         startActivity(toDetailedForecastData);
     }
 
@@ -94,7 +96,7 @@ public class ForecastList extends AppCompatActivity implements OnItemListener {
             @Override
             public void onResponse(@NonNull Call<WeatherApiFullResponse> call, @NonNull Response<WeatherApiFullResponse> response) {
                 if(response.body() != null) {
-                    for(WeatherDailyResponse day : response.body().getDailyList()) {
+                    for(WeatherMainBodyResponse day : response.body().getDailyList()) {
                         picNames.add(day.getWeather().get(0).getIcon());
                         String description = day.getWeather().get(0).getDescription();
                         Double temperature = day.getTemp().getDay();
