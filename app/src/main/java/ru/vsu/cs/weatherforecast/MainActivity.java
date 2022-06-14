@@ -97,11 +97,12 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Double latitude = addresses.get(0).getLatitude();
                     Double longitude = addresses.get(0).getLongitude();
+                    String cityName = addresses.get(0).getLocality();
                     Intent toForecastView = new Intent(context, cls);
                     toForecastView.putExtra("latitude", latitude);
                     toForecastView.putExtra("longitude", longitude);
                     toForecastView.putExtra("position", 0);
-                    toForecastView.putExtra("cityName", etCityName.getText().toString());
+                    toForecastView.putExtra("cityName", cityName);
                     toForecastView.putExtra("hourlyAvailable", true);
                     startActivity(toForecastView);
                 }//implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
