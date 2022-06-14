@@ -12,5 +12,5 @@
     <color name="accent">#2B4679</color>
     <color name="chartTemperatureFill">#2B4679</color>
     <color name="chartTemperatureLine">#D9137FDD</color>
-    <color name="listItemTemperature">#EC6E4C</color>
+    <color name="listItemTemperature">#E6E5D7</color>
 </resources>

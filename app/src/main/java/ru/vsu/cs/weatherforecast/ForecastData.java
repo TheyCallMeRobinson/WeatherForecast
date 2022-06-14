@@ -175,7 +175,7 @@ public class ForecastData extends AppCompatActivity {
         temperatureChart.setDragXEnabled(true);
         temperatureChart.setScaleEnabled(true);
         temperatureChart.getBackground().setAlpha(130);
-        temperatureChart.animateY(1000);
+        temperatureChart.animateX(1000);
         temperatureChart.invalidate();
     }
 

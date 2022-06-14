@@ -95,7 +95,7 @@
         <item name="android:ems">8</item>
     </style>
 
-    <style name="ForecastListTemperature">
+    <style name="Text.ForecastListTemperature">
         <item name="android:textColor">@color/listItemTemperature</item>
 <!--        <item name="android:shadowColor">@color/darkBlue</item>-->
         <item name="android:background">@color/white_pale</item>
