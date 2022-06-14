@@ -1,7 +1,7 @@
 package ru.vsu.cs.weatherforecast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
+import static android.view.View.INVISIBLE;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -10,7 +10,6 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -39,8 +38,10 @@ public class MainActivity extends AppCompatActivity {
     private AutoCompleteTextView etCityName;
     private Button btnGetForecastForToday;
     private Button btnGetForecastForWeek;
+    private Button btnGetLocationAuto;
     private LocationManager locationManager;
     private ProgressBar progressBar;
+    private String currentCity;
 
     private static final String[] CITIES = new String[]{
             "Moskow", "Kiyv", "Berlin", "London", "Paris", "Warsaw", "New York", "Hong Kong", "Tokyo"
@@ -52,14 +53,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setUpViews();
         startAnimations();
-        checkLocationPermission();
+        requestLocationPermission();
+        //checkLocationPermission();
         setListeners();
     }
 
     private void startAnimations() {
         AnimatorSet setFirst = new AnimatorSet();
         List<Animator> animators = AppUtils.getFadeInAnimatorsForViews(2000, tvMainTextView);
-        animators.addAll(AppUtils.getFadeInAnimatorsForViews(500, etCityName, btnGetForecastForToday, btnGetForecastForWeek));
+        animators.addAll(AppUtils.getFadeInAnimatorsForViews(500, etCityName, btnGetLocationAuto, btnGetForecastForToday, btnGetForecastForWeek));
         setFirst.playSequentially(animators);
         setFirst.start();
     }
@@ -71,9 +73,11 @@ public class MainActivity extends AppCompatActivity {
         btnGetForecastForWeek = findViewById(R.id.btnGetForecastForWeek);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         progressBar = findViewById(R.id.progressBarMain);
+        btnGetLocationAuto = findViewById(R.id.btnGetLocationAuto);
         etCityName.setAlpha(0.0f);
         btnGetForecastForWeek.setAlpha(0.0f);
         btnGetForecastForToday.setAlpha(0.0f);
+        btnGetLocationAuto.setAlpha(0.0f);
         ArrayAdapter<String> citiesAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, CITIES);
         etCityName.setAdapter(citiesAdapter);
@@ -82,6 +86,23 @@ public class MainActivity extends AppCompatActivity {
     private void setListeners() {
         btnGetForecastForToday.setOnClickListener(v -> buttonHandler(MainActivity.this, ForecastData.class));
         btnGetForecastForWeek.setOnClickListener(v -> buttonHandler(MainActivity.this, ForecastList.class));
+        btnGetLocationAuto.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestLocationPermission();
+                Toast.makeText(MainActivity.this, getString(R.string.requestGeo), Toast.LENGTH_SHORT).show();
+            } else {
+                if(currentCity != null) {
+                    etCityName.setText(currentCity);
+                    Toast.makeText(MainActivity.this, getString(R.string.locationDetermined) + " " + currentCity, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, getString(R.string.geocoderError), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void requestLocationPermission() {
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
     }
 
     private void buttonHandler(Context context, Class<?> cls) {
@@ -98,6 +119,9 @@ public class MainActivity extends AppCompatActivity {
                     Double latitude = addresses.get(0).getLatitude();
                     Double longitude = addresses.get(0).getLongitude();
                     String cityName = addresses.get(0).getLocality();
+                    if (cityName == null) {
+                        throw new IllegalArgumentException("Пожалуйста, введите корректное название города");
+                    }
                     Intent toForecastView = new Intent(context, cls);
                     toForecastView.putExtra("latitude", latitude);
                     toForecastView.putExtra("longitude", longitude);
@@ -107,65 +131,69 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(toForecastView);
                 }//implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'
             } catch (IOException e) {
-                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                progressBar.setVisibility(INVISIBLE);
                 Toast.makeText(MainActivity.this, R.string.connectionIssue, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                progressBar.setVisibility(INVISIBLE);
+                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
-        progressBar.setVisibility(ProgressBar.INVISIBLE);
+        progressBar.setVisibility(INVISIBLE);
     }
 
-    public boolean checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+//    public boolean checkLocationPermission() {
+//        if (ContextCompat.checkSelfPermission(this,
+//                Manifest.permission.ACCESS_FINE_LOCATION)
+//                != PackageManager.PERMISSION_GRANTED) {
+//
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+//
+//                new AlertDialog.Builder(this)
+//                        .setTitle(R.string.title_location_permission)
+//                        .setMessage(R.string.text_location_permission)
+//                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                ActivityCompat.requestPermissions(MainActivity.this,
+//                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                                        MY_PERMISSIONS_REQUEST_LOCATION);
+//                            }
+//                        })
+//                        .create()
+//                        .show();
+//            } else {
+//                ActivityCompat.requestPermissions(this,
+//                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                        MY_PERMISSIONS_REQUEST_LOCATION);
+//            }
+//            return false;
+//        } else {
+//            return true;
+//        }
+//    }
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                new AlertDialog.Builder(this)
-                        .setTitle(R.string.title_location_permission)
-                        .setMessage(R.string.text_location_permission)
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ActivityCompat.requestPermissions(MainActivity.this,
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION);
-                            }
-                        })
-                        .create()
-                        .show();
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-                if (ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                            1000, 10, locationListener);
-                    locationManager.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER, 400, 10,
-                            locationListener);
-                }
-            }
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+//            if (grantResults.length > 0
+//                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
+//            ) {
+//                if (ContextCompat.checkSelfPermission(this,
+//                        Manifest.permission.ACCESS_FINE_LOCATION)
+//                        == PackageManager.PERMISSION_GRANTED) {
+//                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+//                            1000, 10, locationListener);
+//                    locationManager.requestLocationUpdates(
+//                            LocationManager.NETWORK_PROVIDER, 400, 10,
+//                            locationListener);
+//                }
+//            }
+//        }
+//    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -186,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-
             locationManager.removeUpdates(locationListener);
         }
     }
@@ -202,10 +229,9 @@ public class MainActivity extends AppCompatActivity {
                     addresses = geocoder.getFromLocation(location.getLatitude(),
                             location.getLongitude(), 1);
                     if (addresses.size() > 0) {
-                        System.out.println(addresses.get(0).getLocality());
                         cityName = addresses.get(0).getLocality();
-                        Toast.makeText(MainActivity.this, getString(R.string.location_determined) + " " + cityName, Toast.LENGTH_SHORT).show();
-                        etCityName.setText(cityName);
+                        if (cityName != null)
+                            currentCity = cityName;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
