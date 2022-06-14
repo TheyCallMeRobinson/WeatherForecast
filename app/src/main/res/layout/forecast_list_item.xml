@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -24,8 +25,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="0dp"
-            android:layout_height="75dp"
+            android:layout_height="wrap_content"
+            android:minHeight="75dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toStartOf="@+id/weekdayItem"
             app:layout_constraintStart_toEndOf="@+id/weatherImageItem"
@@ -43,7 +46,7 @@
 
             <TextView
                 android:id="@+id/temperatureItem"
-                style="@style/Text.ForecastListTemperature"
+                style="@style/ForecastListTemperature"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
@@ -56,7 +59,7 @@
             android:id="@+id/weekdayItem"
             style="@style/Text.ForecastListDate"
             android:layout_width="wrap_content"
-            android:layout_height="75dp"
+            android:layout_height="match_parent"
             android:minWidth="100dp"
             android:text="01.01.1970\nTue"
             android:textAlignment="center"
@@ -68,9 +71,27 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="75dp"
             android:layout_height="75dp"
+            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:visibility="visible" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/pictureProgressBarItem"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

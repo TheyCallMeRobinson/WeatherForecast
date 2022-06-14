@@ -1,144 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/forecastDataMain"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ForecastData"
+    android:layout_height="wrap_content"
+    android:id="@+id/forecastDataMain"
     android:background="@drawable/background_img">
 
-    <TextView
-        android:id="@+id/tvWeatherInCity"
-        style="@style/Text.ForecastTextView"
-        android:text="@string/weatherInCity"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvTemperature"
-        style="@style/Text.ForecastDetailsTextView"
-        android:text="@string/temperature"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvWeatherInCity" />
-
-    <TextView
-        android:id="@+id/tvFeelsLike"
-        style="@style/Text.ForecastDetailsTextView"
-        android:text="@string/feelsLike"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTemperature" />
-
-    <TextView
-        android:id="@+id/tvWindSpeed"
-        style="@style/Text.ForecastDetailsTextView"
-        android:text="@string/windSpeed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvFeelsLike" />
-
-    <TextView
-        android:id="@+id/tvTemperatureValue"
-        style="@style/Text.ForecastDetailsTextViewValue"
-        app:layout_constraintStart_toEndOf="@+id/tvTemperature"
-        app:layout_constraintTop_toBottomOf="@+id/tvWeatherInCity" />
-
-    <TextView
-        android:id="@+id/tvFeelsLikeValue"
-        style="@style/Text.ForecastDetailsTextViewValue"
-        app:layout_constraintStart_toEndOf="@+id/tvFeelsLike"
-        app:layout_constraintTop_toBottomOf="@+id/tvTemperature" />
-
-    <TextView
-        android:id="@+id/tvWindSpeedValue"
-        style="@style/Text.ForecastDetailsTextViewValue"
-        app:layout_constraintStart_toEndOf="@+id/tvWindSpeed"
-        app:layout_constraintTop_toBottomOf="@+id/tvFeelsLike" />
-
-    <TextView
-        android:id="@+id/tvClouds"
-        style="@style/Text.ForecastDetailsTextView"
-        android:text="@string/clouds"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvWindSpeed" />
-
-    <TextView
-        android:id="@+id/tvPressure"
-        style="@style/Text.ForecastDetailsTextView"
-        android:text="@string/pressure"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvClouds" />
-
-    <TextView
-        android:id="@+id/tvSunrise"
-        style="@style/Text.ForecastDetailsTextView"
-        android:text="@string/sunrise"
-        app:layout_constraintStart_toStartOf="parent"
-        android:ems="4"
-        app:layout_constraintTop_toBottomOf="@+id/tvPressure" />
-
-    <TextView
-        android:id="@+id/tvCityName"
-        style="@style/Text.ForecastTextView"
-        android:layout_marginStart="0dp"
-        app:layout_constraintStart_toEndOf="@+id/tvWeatherInCity"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvSunset"
-        style="@style/Text.ForecastDetailsTextView"
-        android:ems="4"
-        android:text="@string/sunset"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSunrise" />
-
-    <TextView
-        android:id="@+id/tvCloudsValue"
-        style="@style/Text.ForecastDetailsTextViewValue"
-        app:layout_constraintStart_toEndOf="@+id/tvClouds"
-        app:layout_constraintTop_toBottomOf="@+id/tvWindSpeed" />
-
-    <TextView
-        android:id="@+id/tvPressureValue"
-        style="@style/Text.ForecastDetailsTextViewValue"
-        app:layout_constraintStart_toEndOf="@+id/tvPressure"
-        app:layout_constraintTop_toBottomOf="@+id/tvClouds" />
-
-    <TextView
-        android:id="@+id/tvSunriseValue"
-        style="@style/Text.ForecastDetailsTextViewValue"
-        app:layout_constraintStart_toEndOf="@+id/tvSunrise"
-        app:layout_constraintTop_toBottomOf="@+id/tvPressure" />
-
-    <TextView
-        android:id="@+id/tvSunsetValue"
-        style="@style/Text.ForecastDetailsTextViewValue"
-        app:layout_constraintStart_toEndOf="@+id/tvSunset"
-        app:layout_constraintTop_toBottomOf="@+id/tvSunrise" />
-
-    <ProgressBar
-        android:id="@+id/forecastDataProgressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/temperatureChart"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/white"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSunset" />
+        android:background="@color/white_pale"
+        tools:context=".ForecastData">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/tvWeatherInCity"
+            style="@style/Text.ForecastTextView"
+            android:text="@string/weatherInCity"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTemperature"
+            style="@style/Text.ForecastDetailsTextView"
+            android:text="@string/temperature"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCityName" />
+
+        <TextView
+            android:id="@+id/tvFeelsLike"
+            style="@style/Text.ForecastDetailsTextView"
+            android:text="@string/feelsLike"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTemperature" />
+
+        <TextView
+            android:id="@+id/tvWindSpeed"
+            style="@style/Text.ForecastDetailsTextView"
+            android:text="@string/windSpeed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvFeelsLike" />
+
+        <TextView
+            android:id="@+id/tvTemperatureValue"
+            style="@style/Text.ForecastDetailsTextViewValue"
+            app:layout_constraintStart_toEndOf="@+id/tvTemperature"
+            app:layout_constraintTop_toBottomOf="@+id/tvCityName" />
+
+        <TextView
+            android:id="@+id/tvFeelsLikeValue"
+            style="@style/Text.ForecastDetailsTextViewValue"
+            app:layout_constraintStart_toEndOf="@+id/tvFeelsLike"
+            app:layout_constraintTop_toBottomOf="@+id/tvTemperature" />
+
+        <TextView
+            android:id="@+id/tvWindSpeedValue"
+            style="@style/Text.ForecastDetailsTextViewValue"
+            app:layout_constraintStart_toEndOf="@+id/tvWindSpeed"
+            app:layout_constraintTop_toBottomOf="@+id/tvFeelsLike" />
+
+        <TextView
+            android:id="@+id/tvClouds"
+            style="@style/Text.ForecastDetailsTextView"
+            android:text="@string/clouds"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvWindSpeed" />
+
+        <TextView
+            android:id="@+id/tvPressure"
+            style="@style/Text.ForecastDetailsTextView"
+            android:text="@string/pressure"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvClouds" />
+
+        <TextView
+            android:id="@+id/tvSunrise"
+            style="@style/Text.ForecastDetailsTextView"
+            android:ems="4"
+            android:text="@string/sunrise"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvPressure" />
+
+        <TextView
+            android:id="@+id/tvCityName"
+            style="@style/Text.ForecastTextView"
+            android:layout_width="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvWeatherInCity"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvSunset"
+            style="@style/Text.ForecastDetailsTextView"
+            android:ems="4"
+            android:text="@string/sunset"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvSunrise" />
+
+        <TextView
+            android:id="@+id/tvCloudsValue"
+            style="@style/Text.ForecastDetailsTextViewValue"
+            app:layout_constraintStart_toEndOf="@+id/tvClouds"
+            app:layout_constraintTop_toBottomOf="@+id/tvWindSpeed" />
+
+        <TextView
+            android:id="@+id/tvPressureValue"
+            style="@style/Text.ForecastDetailsTextViewValue"
+            app:layout_constraintStart_toEndOf="@+id/tvPressure"
+            app:layout_constraintTop_toBottomOf="@+id/tvClouds" />
+
+        <TextView
+            android:id="@+id/tvSunriseValue"
+            style="@style/Text.ForecastDetailsTextViewValue"
+            app:layout_constraintStart_toEndOf="@+id/tvSunrise"
+            app:layout_constraintTop_toBottomOf="@+id/tvPressure" />
+
+        <TextView
+            android:id="@+id/tvSunsetValue"
+            style="@style/Text.ForecastDetailsTextViewValue"
+            app:layout_constraintStart_toEndOf="@+id/tvSunset"
+            app:layout_constraintTop_toBottomOf="@+id/tvSunrise" />
+
+        <ProgressBar
+            android:id="@+id/forecastDataProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/temperatureChart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="300dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/white"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvSunset" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

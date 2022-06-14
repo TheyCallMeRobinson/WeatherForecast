@@ -4,16 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.icu.util.Calendar;
-import android.icu.util.TimeZone;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.text.format.Time;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,13 +20,8 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IFillFormatter;
-import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -78,7 +72,7 @@ public class ForecastData extends AppCompatActivity {
 
     private void setBackgroundImg(String weather) {
         Map<String, Integer> pictures = AppUtils.getPicturesMap();
-        ConstraintLayout cl = findViewById(R.id.forecastDataMain);
+        ScrollView cl = findViewById(R.id.forecastDataMain);
         if (pictures.get(weather.toLowerCase(Locale.ROOT)) != null) {
             cl.setBackgroundResource(pictures.get(weather.toLowerCase(Locale.ROOT)));
         }
@@ -109,8 +103,6 @@ public class ForecastData extends AppCompatActivity {
         tvPressureValue = findViewById(R.id.tvPressureValue);
         tvSunriseValue = findViewById(R.id.tvSunriseValue);
         tvSunsetValue = findViewById(R.id.tvSunsetValue);
-        if (hourlyAvailable)
-            temperatureChart = findViewById(R.id.temperatureChart);
     }
 
     private void setData() {
@@ -125,40 +117,66 @@ public class ForecastData extends AppCompatActivity {
     }
 
     private void setChart() {
-        temperatureChart = findViewById(R.id.temperatureChart);
-        List<Entry> entries = new ArrayList<>();
-        Calendar calendar = Calendar.getInstance();
-        for(int i = 0; i < 24; i += 2) {
-            calendar.setTime(new Date(weatherHourResponses.get(i).getDt() * 1000L));
-            //int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            entries.add(new Entry(i, weatherHourResponses.get(i).getTemp().floatValue()));
+        if (hourlyAvailable) {
+            temperatureChart = findViewById(R.id.temperatureChart);
+            temperatureChart.setVisibility(View.VISIBLE);
+        } else {
+            temperatureChart = findViewById(R.id.temperatureChart);
+            temperatureChart.setVisibility(View.INVISIBLE);
         }
+
+        List<Entry> entries = new ArrayList<>();
+        List<Float> xValues = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        for(int i = 0; i < 24; i++) {
+            calendar.setTime(new Date(weatherHourResponses.get(i).getDt() * 1000L));
+            entries.add(new Entry(i + currentHour, weatherHourResponses.get(i).getTemp().floatValue()));
+            xValues.add(i + currentHour * 1f);
+        }
+
+        int chartMainColor = ResourcesCompat.getColor(getResources(), R.color.chartTemperatureLine, null);
 
         LineDataSet set1 = new LineDataSet(entries, "Temperature");
         set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         set1.setCubicIntensity(0.2f);
         set1.setDrawFilled(true);
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_temperature_above_zero);
+        set1.setFillDrawable(drawable);
         set1.setLineWidth(1.8f);
         set1.setCircleRadius(4f);
-        set1.setCircleColor(Color.RED);
-        set1.setColor(Color.RED);
-        set1.setFillColor(Color.RED);
-        set1.setFillAlpha(100);
+        set1.setDrawCircleHole(false);
+        set1.setCircleColor(chartMainColor);
+        set1.setColor(chartMainColor);
         set1.setDrawHorizontalHighlightIndicator(false);
         set1.setDrawVerticalHighlightIndicator(false);
+        set1.setValueTextSize(9);
+        set1.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return String.format(Locale.getDefault(),"%.1f", value);
+            }
+        });
         LineData data = new LineData(set1);
 
-
-        temperatureChart.setTouchEnabled(true);
-        temperatureChart.getDescription().setEnabled(false);
-        temperatureChart.getXAxis().setEnabled(false);
-        temperatureChart.setDragEnabled(false);
-        temperatureChart.setScaleEnabled(false);
+        temperatureChart.getXAxis().setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return (int)value % 24 + ":00";
+            }
+        });
+        temperatureChart.setViewPortOffsets(50, 50, 50, 20);
+        temperatureChart.getXAxis().setTextSize(12);
         temperatureChart.setData(data);
-        temperatureChart.animateX(1500);
+        temperatureChart.getDescription().setEnabled(false);
+        temperatureChart.getLegend().setEnabled(false);
+        temperatureChart.setTouchEnabled(true);
+        temperatureChart.setDragYEnabled(false);
+        temperatureChart.setDragXEnabled(true);
+        temperatureChart.setScaleEnabled(true);
+        temperatureChart.getBackground().setAlpha(130);
+        temperatureChart.animateY(1000);
         temperatureChart.invalidate();
-        //temperatureChart.setDescription(null);
-        //temperatureChart.setDrawFilled()
     }
 
     private void getDataFromApi() {

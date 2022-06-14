@@ -3,7 +3,7 @@
 
     <style name="Text">
         <item name="android:textColor">@color/black</item>
-        <item name="android:shadowColor">@color/darkBlue</item>
+        <item name="android:shadowColor">@color/black</item>
         <item name="android:shadowDx">2</item>
         <item name="android:shadowDy">2</item>
         <item name="android:shadowRadius">2</item>
@@ -11,7 +11,7 @@
 
     <style name="Text.MainTextView">
         <item name="android:textColor">@color/sky_blue</item>
-        <item name="android:shadowColor">@color/darkBlue</item>
+<!--        <item name="android:shadowColor">@color/darkBlue</item>-->
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">100dp</item>
@@ -38,33 +38,33 @@
 
     <style name="Text.ForecastTextView">
         <item name="android:textColor">@color/sky_blue</item>
-        <item name="android:shadowColor">@color/darkBlue</item>
-        <item name="android:paddingStart">10dp</item>
-        <item name="android:paddingEnd">5dp</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">50dp</item>
-        <item name="android:layout_marginStart">16dp</item>
-        <item name="android:textSize">24sp</item>
-    </style>
-
-    <style name="Text.ForecastDetailsTextView">
-        <item name="android:textColor">@color/sky_blue</item>
-        <item name="android:shadowColor">@color/darkBlue</item>
-        <item name="android:background">@color/white_pale</item>
+<!--        <item name="android:shadowColor">@color/darkBlue</item>-->
         <item name="android:paddingStart">10dp</item>
         <item name="android:paddingEnd">5dp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">20dp</item>
-        <item name="android:layout_marginStart">16dp</item>
+<!--        <item name="android:layout_marginStart">16dp</item>-->
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="Text.ForecastDetailsTextView">
+        <item name="android:textColor">@color/sky_blue</item>
+<!--        <item name="android:shadowColor">@color/darkBlue</item>-->
+<!--        <item name="android:background">@color/white_pale</item>-->
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">5dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">20dp</item>
+<!--        <item name="android:layout_marginStart">16dp</item>-->
         <item name="android:textSize">18sp</item>
         <item name="android:ems">8</item>
     </style>
 
     <style name="Text.ForecastDetailsTextViewValue">
         <item name="android:textColor">@color/sky_blue</item>
-        <item name="android:shadowColor">@color/darkBlue</item>
+<!--        <item name="android:shadowColor">@color/darkBlue</item>-->
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">20dp</item>
@@ -95,9 +95,9 @@
         <item name="android:ems">8</item>
     </style>
 
-    <style name="Text.ForecastListTemperature">
-        <item name="android:textColor">@color/black</item>
-        <item name="android:shadowColor">@color/white_pale</item>
+    <style name="ForecastListTemperature">
+        <item name="android:textColor">@color/listItemTemperature</item>
+<!--        <item name="android:shadowColor">@color/darkBlue</item>-->
         <item name="android:background">@color/white_pale</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -109,7 +109,7 @@
 
     <style name="Text.ForecastListDate">
         <item name="android:textColor">@color/sky_blue</item>
-        <item name="android:shadowColor">@color/darkBlue</item>
+<!--        <item name="android:shadowColor">@color/darkBlue</item>-->
         <item name="android:background">@color/white_pale</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
