@@ -23,7 +23,7 @@
 
     <style name="Text.MainEditText">
         <item name="android:textColor">@color/white</item>
-        <item name="android:background">@color/white_pale</item>
+        <item name="android:background">@drawable/left_side_round_input_text</item>
         <item name="android:textColorHint">@color/white</item>
         <item name="android:inputType">textPersonName</item>
         <item name="android:minHeight">48dp</item>
@@ -74,13 +74,17 @@
     </style>
 
     <style name="Button">
-        <item name="android:background">@color/blue</item>
+        <item name="android:background">@drawable/round_button</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">40dp</item>
         <item name="android:layout_marginTop">40dp</item>
         <item name="android:layout_marginEnd">40dp</item>
+    </style>
+
+    <style name="Button.RightSided">
+        <item name="android:background">@drawable/right_side_round_button</item>
     </style>
 
     <style name="Text.ForecastListTextView">

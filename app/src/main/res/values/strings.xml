@@ -5,8 +5,8 @@
     <string name="getForecastForToday">Узнать на сегодня</string>
     <string name="getForecastForWeek">Узнать на неделю</string>
     <string name="requestUserInput">Пожалуйста, введите название города</string>
-    <string name="checkInput">Пожалуйста, проверьте правильность введенных данных</string>
-    <string name="checkCityName">Пожалуйста, введите правильное название города</string>
+    <string name="checkInput">Пожалуйста, проверьте корректность введенных данных</string>
+    <string name="checkCityName">Пожалуйста, введите корректное название города</string>
     <string name="connectionIssue">Пожалуйста, проверьте соединение с интернетом</string>
     <string name="geocoderError">Не удалось определить ваше местоположение, пожалуйста, попробуйте ещё раз</string>
     <string name="requestGeo">Пожалуйста, разрешите использование геолокации, чтобы определять город автоматически</string>
@@ -21,9 +21,10 @@
     <string name="forecast">Погода</string>
     <string name="dateHeader">Дата</string>
     <string name="temperatureHeader">Температура</string>
-    <string name="cloudsHeader">Облака %</string>
+    <string name="cloudsHeader">Облачность %</string>
     <string name="windSpeedHeader">Скорость ветра</string>
     <string name="weather_picture">weather picture</string>
     <string name="ok">Да</string>
     <string name="locationDetermined">Мы автоматически определили ваше местоположение:</string>
+    <string name="auto">AUTO</string>
 </resources>

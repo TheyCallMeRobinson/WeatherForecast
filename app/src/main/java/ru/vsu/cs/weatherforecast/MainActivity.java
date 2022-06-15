@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     Double longitude = addresses.get(0).getLongitude();
                     String cityName = addresses.get(0).getLocality();
                     if (cityName == null) {
-                        throw new IllegalArgumentException("Пожалуйста, введите корректное название города");
+                        throw new IllegalArgumentException(getString(R.string.checkCityName));
                     }
                     Intent toForecastView = new Intent(context, cls);
                     toForecastView.putExtra("latitude", latitude);
@@ -143,57 +143,6 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(INVISIBLE);
     }
 
-//    public boolean checkLocationPermission() {
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.ACCESS_FINE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-//                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-//
-//                new AlertDialog.Builder(this)
-//                        .setTitle(R.string.title_location_permission)
-//                        .setMessage(R.string.text_location_permission)
-//                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                ActivityCompat.requestPermissions(MainActivity.this,
-//                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                                        MY_PERMISSIONS_REQUEST_LOCATION);
-//                            }
-//                        })
-//                        .create()
-//                        .show();
-//            } else {
-//                ActivityCompat.requestPermissions(this,
-//                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                        MY_PERMISSIONS_REQUEST_LOCATION);
-//            }
-//            return false;
-//        } else {
-//            return true;
-//        }
-//    }
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
-//            if (grantResults.length > 0
-//                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
-//            ) {
-//                if (ContextCompat.checkSelfPermission(this,
-//                        Manifest.permission.ACCESS_FINE_LOCATION)
-//                        == PackageManager.PERMISSION_GRANTED) {
-//                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-//                            1000, 10, locationListener);
-//                    locationManager.requestLocationUpdates(
-//                            LocationManager.NETWORK_PROVIDER, 400, 10,
-//                            locationListener);
-//                }
-//            }
-//        }
-//    }
     @Override
     protected void onResume() {
         super.onResume();
