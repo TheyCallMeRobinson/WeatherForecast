@@ -31,7 +31,7 @@
             style="@style/Text.ForecastDetailsTextView"
             android:text="@string/temperature"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvCityName" />
+            app:layout_constraintTop_toBottomOf="@+id/tvDate" />
 
         <TextView
             android:id="@+id/tvFeelsLike"
@@ -51,7 +51,7 @@
             android:id="@+id/tvTemperatureValue"
             style="@style/Text.ForecastDetailsTextViewValue"
             app:layout_constraintStart_toEndOf="@+id/tvTemperature"
-            app:layout_constraintTop_toBottomOf="@+id/tvCityName" />
+            app:layout_constraintTop_toBottomOf="@+id/tvDate" />
 
         <TextView
             android:id="@+id/tvFeelsLikeValue"
@@ -150,6 +150,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvSunset" />
+
+        <TextView
+            android:id="@+id/tvDate"
+            style="@style/Text.ForecastDetailsTextView"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:textSize="22sp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:ems="12"
+            app:layout_constraintTop_toBottomOf="@+id/tvCityName" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

@@ -43,7 +43,6 @@ public class ForecastList extends AppCompatActivity implements OnItemListener {
     private RecyclerView forecastList;
     private ProgressBar progressBar;
     private List<ForecastListItem> list = new ArrayList<>();
-
     private List<String> picNames = new ArrayList<>();
 
     @Override
@@ -54,8 +53,6 @@ public class ForecastList extends AppCompatActivity implements OnItemListener {
         progressBar.setVisibility(ProgressBar.VISIBLE);
         getExtras();
         getDataFromApi();
-//        setUpViews();
-//        setUpListeners();
     }
 
     private void getExtras() {
@@ -136,7 +133,7 @@ public class ForecastList extends AppCompatActivity implements OnItemListener {
                     }
                 }
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {}
+                public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {}
             });
         }
     }
