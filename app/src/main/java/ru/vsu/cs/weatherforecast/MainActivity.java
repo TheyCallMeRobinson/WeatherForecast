@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 requestLocationPermission();
                 Toast.makeText(MainActivity.this, getString(R.string.requestGeo), Toast.LENGTH_SHORT).show();
             } else {
-                if(currentCity != null) {
+                if (currentCity != null) {
                     etCityName.setText(currentCity);
                     Toast.makeText(MainActivity.this, getString(R.string.locationDetermined) + " " + currentCity, Toast.LENGTH_SHORT).show();
                 } else {
@@ -171,31 +171,32 @@ public class MainActivity extends AppCompatActivity {
     private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            if ("".equals(etCityName.getText().toString())) {
-                String cityName;
-                Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
-                List<Address> addresses;
-                try {
-                    addresses = geocoder.getFromLocation(location.getLatitude(),
-                            location.getLongitude(), 1);
-                    if (addresses.size() > 0) {
-                        cityName = addresses.get(0).getLocality();
-                        if (cityName != null)
-                            currentCity = cityName;
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+            String cityName;
+            Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
+            List<Address> addresses;
+            try {
+                addresses = geocoder.getFromLocation(location.getLatitude(),
+                        location.getLongitude(), 100);
+                if (addresses.size() > 0) {
+                    cityName = addresses.get(0).getLocality();
+                    if (cityName != null)
+                        currentCity = cityName;
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
         @Override
-        public void onProviderDisabled(String provider) {}
+        public void onProviderDisabled(String provider) {
+        }
 
         @Override
-        public void onProviderEnabled(String provider) {}
+        public void onProviderEnabled(String provider) {
+        }
 
         @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
     };
 }
