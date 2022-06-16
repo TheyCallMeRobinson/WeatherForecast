@@ -117,22 +117,22 @@ public class ForecastData extends AppCompatActivity {
     }
 
     private void setChart() {
+        temperatureChart = findViewById(R.id.temperatureChart);
+
         if (hourlyAvailable) {
-            temperatureChart = findViewById(R.id.temperatureChart);
             temperatureChart.setVisibility(View.VISIBLE);
+            temperatureChart.setMinimumHeight(300);
         } else {
-            temperatureChart = findViewById(R.id.temperatureChart);
             temperatureChart.setVisibility(View.INVISIBLE);
+            return;
         }
 
         List<Entry> entries = new ArrayList<>();
-        List<Float> xValues = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
         for(int i = 0; i < 24; i++) {
             calendar.setTime(new Date(weatherHourResponses.get(i).getDt() * 1000L));
             entries.add(new Entry(i + currentHour, weatherHourResponses.get(i).getTemp().floatValue()));
-            xValues.add(i + currentHour * 1f);
         }
 
         int chartMainColor = ResourcesCompat.getColor(getResources(), R.color.chartTemperatureLine, null);
@@ -181,7 +181,7 @@ public class ForecastData extends AppCompatActivity {
 
     private void getDataFromApi() {
         ForecastRestService service = AppUtils.retrofit.create(ForecastRestService.class);
-        Call<WeatherApiFullResponse> jsonObjectCall = service.getForecast(latitude, longitude, "current,minutely,alerts", AppUtils.WEATHER_API_KEY, "metric", "ru");
+        Call<WeatherApiFullResponse> jsonObjectCall = service.getForecast(latitude, longitude, "current,minutely,alerts", AppUtils.WEATHER_API_KEY, "metric", Locale.getDefault().toString());
         jsonObjectCall.enqueue(new Callback<WeatherApiFullResponse>() {
             @Override
             public void onResponse(@NonNull Call<WeatherApiFullResponse> call, @NonNull Response<WeatherApiFullResponse> response) {

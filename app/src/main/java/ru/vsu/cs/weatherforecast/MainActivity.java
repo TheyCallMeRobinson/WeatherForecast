@@ -54,13 +54,14 @@ public class MainActivity extends AppCompatActivity {
         setUpViews();
         startAnimations();
         requestLocationPermission();
-        //checkLocationPermission();
         setListeners();
     }
 
     private void startAnimations() {
         AnimatorSet setFirst = new AnimatorSet();
         List<Animator> animators = AppUtils.getFadeInAnimatorsForViews(2000, tvMainTextView);
+        setFirst.playSequentially(animators);
+        setFirst.start();
         animators.addAll(AppUtils.getFadeInAnimatorsForViews(500, etCityName, btnGetLocationAuto, btnGetForecastForToday, btnGetForecastForWeek));
         setFirst.playSequentially(animators);
         setFirst.start();

@@ -27,6 +27,19 @@
         app:layout_constraintTop_toBottomOf="@+id/tvMainTextView" />
 
     <Button
+        android:id="@+id/btnGetLocationAuto"
+        style="@style/Button.RightSided"
+        android:layout_width="60dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:text="@string/auto"
+        app:layout_constraintBottom_toBottomOf="@+id/etCityName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etCityName"/>
+
+    <Button
         android:id="@+id/btnGetForecastForToday"
         style="@style/Button"
         android:text="@string/getForecastForToday"
@@ -37,7 +50,7 @@
     <Button
         android:id="@+id/btnGetForecastForWeek"
         style="@style/Button"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="10dp"
         android:text="@string/getForecastForWeek"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,19 +66,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnGetForecastForWeek" />
-
-    <Button
-        android:id="@+id/btnGetLocationAuto"
-        style="@style/Button.RightSided"
-        android:layout_width="60dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:text="@string/auto"
-        app:layout_constraintBottom_toBottomOf="@+id/etCityName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/etCityName"
-        app:layout_constraintVertical_bias="0.725" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
